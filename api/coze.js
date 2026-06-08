@@ -1,4 +1,4 @@
-const COZE_API_BASE = 'https://api.coze.com/v3';
+const COZE_API_BASE = (process.env.COZE_API_BASE ?? 'https://api.coze.com').replace(/\/$/, '');
 const POLL_INTERVAL_MS = 1000;
 const POLL_TIMEOUT_MS = 60000;
 
@@ -40,6 +40,8 @@ async function createChat(userMessage, existingConversationId) {
   const body = {
     bot_id: process.env.COZE_BOT_ID,
     user_id: 'eduai_user_1',
+    stream: false,
+    auto_save_history: true,
     additional_messages: [{ role: 'user', content: userMessage, content_type: 'text' }],
   };
 
@@ -47,7 +49,7 @@ async function createChat(userMessage, existingConversationId) {
     body.conversation_id = existingConversationId;
   }
 
-  const data = await cozeFetch('/chat', {
+  const data = await cozeFetch('/v3/chat', {
     method: 'POST',
     body: JSON.stringify(body),
   });
@@ -75,14 +77,14 @@ async function waitForChatCompletion(chatId, conversationId) {
       conversation_id: conversationId,
     });
 
-    const data = await cozeFetch(`/chat/retrieve?${params.toString()}`, {
+    const data = await cozeFetch(`/v3/chat/retrieve?${params.toString()}`, {
       method: 'GET',
     });
 
     const status = data?.data?.status;
 
     if (status === 'completed') return;
-    if (status === 'in_progress') {
+    if (status === 'in_progress' || status === 'created') {
       await sleep(POLL_INTERVAL_MS);
       continue;
     }
@@ -100,14 +102,14 @@ async function listMessages(chatId, conversationId) {
     conversation_id: conversationId,
   });
 
-  const data = await cozeFetch(`/chat/message/list?${params.toString()}`, {
+  const data = await cozeFetch(`/v3/chat/message/list?${params.toString()}`, {
     method: 'GET',
   });
 
   return Array.isArray(data?.data) ? data.data : [];
 }
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     res.status(405).json({ error: 'Method not allowed' });
@@ -115,7 +117,9 @@ module.exports = async function handler(req, res) {
   }
 
   if (!process.env.COZE_API_KEY || !process.env.COZE_BOT_ID) {
-    res.status(500).json({ error: 'Missing COZE_API_KEY or COZE_BOT_ID on the server.' });
+    res.status(500).json({
+      error: 'Missing COZE_API_KEY or COZE_BOT_ID on the server. Add them in Vercel Project Settings → Environment Variables (without VITE_ prefix), then redeploy.',
+    });
     return;
   }
 
@@ -147,4 +151,4 @@ module.exports = async function handler(req, res) {
       error: error instanceof Error ? error.message : 'Unknown Coze API error.',
     });
   }
-};
+}

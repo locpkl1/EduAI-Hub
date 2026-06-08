@@ -170,14 +170,14 @@ export default function PromptCreator() {
         }
       }
     } catch (error: any) {
-      // Báº¯t buá»™c log lá»—i chi tiáº¿t Ä‘á»ƒ debug theo yÃªu cáº§u.
+      // Bắt buộc log lỗi chi tiết để debug theo yêu cầu.
       console.log('Coze v3 error detail:', error);
       const errorMessage: Message = {
         id: generateId(),
         role: 'assistant',
         content:
           error?.message ??
-          'Xin lá»—i, Ä‘Ã£ xáº£y ra lá»—i khi káº¿t ná»‘i tá»›i Coze. Vui lÃ²ng thá»­ láº¡i sau hoáº·c kiá»ƒm tra cáº¥u hÃ¬nh API.',
+          'Xin lỗi, đã xảy ra lỗi khi kết nối tới Coze. Vui lòng thử lại sau hoặc kiểm tra cấu hình API.',
         timestamp: new Date(),
       };
 
@@ -254,7 +254,7 @@ export default function PromptCreator() {
               ) : (
                 <History className="w-5 h-5 text-blue-900" />
               )}
-              {sidebarTab === 'context' ? 'Ngá»¯ cáº£nh' : 'Lá»‹ch sá»­'}
+              {sidebarTab === 'context' ? 'Ngữ cảnh' : 'Lịch sử'}
             </h2>
             <button
               onClick={() => setSidebarOpen(false)}
@@ -275,7 +275,7 @@ export default function PromptCreator() {
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
-              Ngá»¯ cáº£nh
+              Ngữ cảnh
             </button>
             <button
               type="button"
@@ -288,7 +288,7 @@ export default function PromptCreator() {
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <History className="w-3.5 h-3.5" />
-              Lá»‹ch sá»­
+              Lịch sử
             </button>
           </div>
 
@@ -296,7 +296,7 @@ export default function PromptCreator() {
             <div className="space-y-2">
               {chatHistory.length === 0 ? (
                 <p className="text-sm text-gray-500 text-center py-8">
-                  ChÆ°a cÃ³ lá»‹ch sá»­ chat. Gá»­i tin nháº¯n Ä‘á»ƒ báº¯t Ä‘áº§u!
+                  Chưa có lịch sử chat. Gửi tin nhắn để bắt đầu!
                 </p>
               ) : (
                 chatHistory.map((item) => (
@@ -323,7 +323,7 @@ export default function PromptCreator() {
             {/* Grade Selection - REQUIRED */}
             <div>
               <label className="block text-sm font-semibold text-gray-900 mb-1.5">
-                Lá»›p há»c <span className="text-red-500">*</span>
+                Lớp học <span className="text-red-500">*</span>
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {grades.map((grade) => (
@@ -345,14 +345,14 @@ export default function PromptCreator() {
             {/* Book Series - OPTIONAL */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Bá»™ sÃ¡ch (TÃ¹y chá»n)
+                Bộ sách (Tùy chọn)
               </label>
               <select
                 value={selectedBook}
                 onChange={(e) => setSelectedBook(e.target.value)}
                 className="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-white text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent"
               >
-                <option value="">Chá»n bá»™ sÃ¡ch</option>
+                <option value="">Chọn bộ sách</option>
                 {bookSeries.map((book) => (
                   <option key={book.value} value={book.value}>
                     {book.label}
@@ -364,14 +364,14 @@ export default function PromptCreator() {
             {/* Subject */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                MÃ´n há»c
+                Môn học
               </label>
               <select
                 value={selectedSubject}
                 onChange={(e) => setSelectedSubject(e.target.value)}
                 className="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-white text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent"
               >
-                <option value="">Chá»n mÃ´n há»c</option>
+                <option value="">Chọn môn học</option>
                 {subjects.map((subject) => (
                   <option key={subject.value} value={subject.value}>
                     {subject.label}
@@ -383,7 +383,7 @@ export default function PromptCreator() {
             {/* Lesson */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                BÃ i há»c (TÃ¹y chá»n)
+                Bài học (Tùy chọn)
               </label>
               <select
                 value={selectedLesson}
@@ -391,7 +391,7 @@ export default function PromptCreator() {
                 disabled={!selectedSubject || availableLessons.length === 0}
                 className="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-white text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-400"
               >
-                <option value="">Chá»n bÃ i há»c</option>
+                <option value="">Chọn bài học</option>
                 {availableLessons.map((lesson) => (
                   <option key={lesson} value={lesson}>
                     {lesson}
@@ -407,19 +407,19 @@ export default function PromptCreator() {
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors"
               >
                 <RefreshCw className="w-4 h-4" />
-                Báº¯t Ä‘áº§u cuá»™c chat má»›i
+                Bắt đầu cuộc chat mới
               </button>
             </div>
 
             {/* Context Summary */}
             {selectedSubject && (
               <div className="p-4 bg-blue-50 rounded-lg">
-                <h3 className="text-sm font-medium text-blue-900 mb-2">Ngá»¯ cáº£nh hiá»‡n táº¡i:</h3>
+                <h3 className="text-sm font-medium text-blue-900 mb-2">Ngữ cảnh hiện tại:</h3>
                 <ul className="text-sm text-gray-700 space-y-1">
-                  <li><span className="font-medium">Lá»›p:</span> {grades.find(g => g.value === selectedGrade)?.label}</li>
-                  {selectedBook && <li><span className="font-medium">SÃ¡ch:</span> {bookSeries.find(b => b.value === selectedBook)?.label}</li>}
-                  <li><span className="font-medium">MÃ´n:</span> {subjects.find(s => s.value === selectedSubject)?.label}</li>
-                  {selectedLesson && <li><span className="font-medium">BÃ i:</span> {selectedLesson}</li>}
+                  <li><span className="font-medium">Lớp:</span> {grades.find(g => g.value === selectedGrade)?.label}</li>
+                  {selectedBook && <li><span className="font-medium">Sách:</span> {bookSeries.find(b => b.value === selectedBook)?.label}</li>}
+                  <li><span className="font-medium">Môn:</span> {subjects.find(s => s.value === selectedSubject)?.label}</li>
+                  {selectedLesson && <li><span className="font-medium">Bài:</span> {selectedLesson}</li>}
                 </ul>
               </div>
             )}
@@ -437,7 +437,7 @@ export default function PromptCreator() {
             className="lg:hidden flex items-center gap-2 p-4 bg-gray-50 border-b border-gray-200 text-gray-700"
           >
             <BookOpen className="w-5 h-5" />
-            <span className="font-medium">Chá»n ngá»¯ cáº£nh</span>
+            <span className="font-medium">Chọn ngữ cảnh</span>
           </button>
         )}
 
@@ -473,7 +473,7 @@ export default function PromptCreator() {
                     className="mt-3 flex items-center gap-1.5 text-xs text-blue-900 hover:text-blue-700"
                   >
                     {copiedId === message.id ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                    {copiedId === message.id ? 'ÄÃ£ copy' : 'Copy Prompt'}
+                    {copiedId === message.id ? 'Đã copy' : 'Copy Prompt'}
                   </button>
                 )}
               </div>
@@ -482,7 +482,7 @@ export default function PromptCreator() {
           {isTyping && (
             <div className="flex justify-start">
               <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl p-4 bg-gray-100 text-gray-500 text-sm">
-                Trá»£ lÃ½ AI Ä‘ang soáº¡n tráº£ lá»i...
+                Trợ lý AI đang soạn trả lời...
               </div>
             </div>
           )}
@@ -497,7 +497,7 @@ export default function PromptCreator() {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyPress}
-              placeholder="Nháº­p tin nháº¯n..."
+              placeholder="Nhập tin nhắn..."
               rows={1}
               className="flex-1 px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent resize-none"
             />
@@ -510,7 +510,7 @@ export default function PromptCreator() {
             </button>
           </div>
           <p className="text-xs text-gray-400 mt-2 text-center">
-            AI sáº½ sá»­ dá»¥ng ngá»¯ cáº£nh tá»« sidebar Ä‘á»ƒ táº¡o Prompt phÃ¹ há»£p
+            AI sẽ sử dụng ngữ cảnh từ sidebar để tạo Prompt phù hợp
           </p>
         </div>
       </div>
