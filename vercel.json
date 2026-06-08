@@ -1,12 +1,7 @@
 {
-  "functions": {
-    "api/coze.js": {
-      "maxDuration": 60
-    }
-  },
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
