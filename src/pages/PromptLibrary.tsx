@@ -3,87 +3,77 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import type { SavedPrompt } from '../types/database';
 import { referencePrompts } from '../data/educationData';
-import {
-  Copy,
-  Check,
-  LogIn,
-  Library,
-  BookOpen,
-  Sparkles,
-  Loader2,
-} from 'lucide-react';
+import { Copy, Check, LogIn, Library, BookOpen, Sparkles, Loader2 } from 'lucide-react';
 
 type Tab = 'mine' | 'reference';
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
-
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      console.error('Không thể sao chép vào clipboard');
+      /* ignore */
     }
   }
-
   return (
     <button
       onClick={handleCopy}
       type="button"
-      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-900 text-white text-sm font-medium rounded-lg hover:bg-blue-800 transition-colors"
+      className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold transition-all duration-150"
+      style={{
+        backgroundColor: copied ? 'var(--color-success)' : 'var(--color-primary)',
+        color: '#ffffff',
+        clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))',
+      }}
     >
-      {copied ? (
-        <>
-          <Check className="w-4 h-4" />
-          Đã sao chép
-        </>
-      ) : (
-        <>
-          <Copy className="w-4 h-4" />
-          Copy Prompt
-        </>
-      )}
+      {copied ? <><Check size={12} /> Đã sao chép</> : <><Copy size={12} /> Copy Prompt</>}
     </button>
   );
 }
 
-function PromptCard({
-  title,
-  subtitle,
-  content,
-  badge,
-}: {
+function PromptCard({ title, subtitle, content, badge }: {
   title: string;
   subtitle?: string;
   content: string;
   badge?: string;
 }) {
-  const preview =
-    content.length > 160 ? `${content.slice(0, 160).trim()}…` : content;
-
+  const preview = content.length > 160 ? `${content.slice(0, 160).trim()}…` : content;
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 flex flex-col h-full hover:border-gray-300 transition-colors">
+    <div
+      className="card-hover flex flex-col h-full p-5"
+      style={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)' }}
+    >
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="min-w-0">
-          <h3 className="font-semibold text-gray-900 truncate">{title}</h3>
+          <h3
+            className="font-display font-bold text-sm truncate"
+            style={{ color: 'var(--color-text)', letterSpacing: '-0.02em' }}
+          >
+            {title}
+          </h3>
           {subtitle && (
-            <p className="text-sm text-gray-500 mt-1">{subtitle}</p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{subtitle}</p>
           )}
         </div>
         {badge && (
-          <span className="flex-shrink-0 px-2.5 py-1 bg-blue-50 text-blue-900 text-xs font-medium rounded-full">
-            {badge}
-          </span>
+          <span className="tag-primary tag flex-shrink-0">{badge}</span>
         )}
       </div>
 
-      <p className="text-sm text-gray-600 flex-1 whitespace-pre-line leading-relaxed">
+      <p
+        className="text-sm flex-1 whitespace-pre-line leading-relaxed line-clamp-3"
+        style={{ color: 'var(--color-text-muted)' }}
+      >
         {preview}
       </p>
 
-      <div className="mt-4 pt-4 border-t border-gray-100">
+      <div
+        className="mt-4 pt-4"
+        style={{ borderTop: '1px solid var(--color-border)' }}
+      >
         <CopyButton text={content} />
       </div>
     </div>
@@ -109,7 +99,6 @@ export default function PromptLibrary() {
         .select('*')
         .eq('user_id', profile!.id)
         .order('created_at', { ascending: false });
-
       if (error) throw error;
       setSavedPrompts(data || []);
     } catch (error) {
@@ -120,114 +109,147 @@ export default function PromptLibrary() {
   }
 
   const tabs: { id: Tab; label: string }[] = [
-    { id: 'mine', label: 'Kho prompt của bản thân' },
+    { id: 'mine', label: 'Kho prompt của tôi' },
     { id: 'reference', label: 'Kho prompt tham khảo' },
   ];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center">
-            <Library className="w-5 h-5 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">Kho Prompt</h1>
-        </div>
-        <p className="text-gray-600">
-          Quản lý prompt cá nhân và khám phá mẫu prompt chất lượng cho việc học.
-        </p>
-      </div>
-
-      <div className="flex gap-2 p-1 bg-gray-100 rounded-xl w-full sm:w-fit">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            type="button"
-            className={`flex-1 sm:flex-none px-4 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-              activeTab === tab.id
-                ? 'bg-blue-900 text-white shadow-sm'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/60'
-            }`}
+    <div style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}>
+      {/* Header */}
+      <div
+        className="border-b py-12"
+        style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg-card)' }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <span className="section-label mb-4 inline-flex">Tài Nguyên</span>
+          <h1
+            className="font-display font-bold text-4xl sm:text-5xl mt-1"
+            style={{ color: 'var(--color-text)', letterSpacing: '-0.04em' }}
           >
-            {tab.label}
-          </button>
-        ))}
+            Kho <span style={{ color: 'var(--color-primary)' }}>Prompt</span>
+          </h1>
+          <p className="text-base mt-3 max-w-xl" style={{ color: 'var(--color-text-muted)' }}>
+            Quản lý prompt cá nhân và khám phá mẫu prompt chất lượng cho việc học.
+          </p>
+        </div>
       </div>
 
-      {activeTab === 'mine' && (
-        <div>
-          {authLoading ? (
-            <div className="flex justify-center py-16">
-              <Loader2 className="w-8 h-8 text-blue-900 animate-spin" />
-            </div>
-          ) : isGuest ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-10 sm:p-12 text-center">
-              <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-8 h-8 text-blue-900" />
-              </div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                Lưu prompt cá nhân của bạn
-              </h2>
-              <p className="text-gray-600 max-w-md mx-auto mb-6">
-                Vui lòng đăng nhập Google để lưu các prompt cá nhân của bạn. Prompt
-                được tạo từ trang Tạo Prompt sẽ xuất hiện tại đây.
-              </p>
-              <button
-                onClick={signInWithGoogle}
-                type="button"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-lg font-medium hover:bg-blue-800 transition-colors"
-              >
-                <LogIn className="w-5 h-5" />
-                Đăng nhập bằng Google
-              </button>
-            </div>
-          ) : loading ? (
-            <div className="flex justify-center py-16">
-              <Loader2 className="w-8 h-8 text-blue-900 animate-spin" />
-            </div>
-          ) : savedPrompts.length > 0 ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {savedPrompts.map((prompt) => (
-                <PromptCard
-                  key={prompt.id}
-                  title={prompt.topic || prompt.purpose || 'Prompt học tập'}
-                  subtitle={[prompt.subject, prompt.chapter].filter(Boolean).join(' · ')}
-                  content={prompt.prompt_content}
-                  badge={prompt.book_series || undefined}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="bg-white rounded-xl border border-gray-200 p-10 sm:p-12 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="w-8 h-8 text-gray-400" />
-              </div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                Chưa có prompt nào
-              </h2>
-              <p className="text-gray-600 max-w-md mx-auto">
-                Hãy tạo prompt đầu tiên từ trang Tạo Prompt — prompt đã lưu sẽ hiển
-                thị tại đây.
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {activeTab === 'reference' && (
-        <div className="grid sm:grid-cols-2 gap-4">
-          {referencePrompts.map((prompt) => (
-            <PromptCard
-              key={prompt.id}
-              title={prompt.title}
-              subtitle={prompt.description}
-              content={prompt.content}
-              badge={prompt.category}
-            />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Tab switcher */}
+        <div className="flex gap-0 mb-8" style={{ borderBottom: '2px solid var(--color-border)' }}>
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              type="button"
+              className="px-5 py-3 text-sm font-semibold transition-all duration-150 relative"
+              style={{
+                color: activeTab === tab.id ? 'var(--color-primary)' : 'var(--color-text-muted)',
+                backgroundColor: 'transparent',
+                borderBottom: activeTab === tab.id ? '2px solid var(--color-primary)' : '2px solid transparent',
+                marginBottom: '-2px',
+              }}
+            >
+              {tab.label}
+            </button>
           ))}
         </div>
-      )}
+
+        {/* My prompts tab */}
+        {activeTab === 'mine' && (
+          <div>
+            {authLoading ? (
+              <div className="flex justify-center py-20">
+                <Loader2 className="w-7 h-7 animate-spin" style={{ color: 'var(--color-primary)' }} />
+              </div>
+            ) : isGuest ? (
+              <div
+                className="border p-12 text-center"
+                style={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)' }}
+              >
+                <div
+                  className="w-16 h-16 flex items-center justify-center mx-auto mb-5"
+                  style={{
+                    backgroundColor: 'var(--color-primary-light)',
+                    clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))',
+                  }}
+                >
+                  <Sparkles size={28} style={{ color: 'var(--color-primary)' }} />
+                </div>
+                <h2
+                  className="font-display font-bold text-xl mb-2"
+                  style={{ color: 'var(--color-text)', letterSpacing: '-0.03em' }}
+                >
+                  Lưu prompt cá nhân
+                </h2>
+                <p className="text-sm mb-6 max-w-md mx-auto" style={{ color: 'var(--color-text-muted)' }}>
+                  Đăng nhập Google để lưu các prompt cá nhân. Prompt tạo từ chatbot sẽ xuất hiện tại đây.
+                </p>
+                <button
+                  onClick={signInWithGoogle}
+                  type="button"
+                  className="btn-primary inline-flex items-center gap-2"
+                >
+                  <LogIn size={15} />
+                  Đăng nhập bằng Google
+                </button>
+              </div>
+            ) : loading ? (
+              <div className="flex justify-center py-20">
+                <Loader2 className="w-7 h-7 animate-spin" style={{ color: 'var(--color-primary)' }} />
+              </div>
+            ) : savedPrompts.length > 0 ? (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {savedPrompts.map((prompt) => (
+                  <PromptCard
+                    key={prompt.id}
+                    title={prompt.topic || prompt.purpose || 'Prompt học tập'}
+                    subtitle={[prompt.subject, prompt.chapter].filter(Boolean).join(' · ')}
+                    content={prompt.prompt_content}
+                    badge={prompt.book_series || undefined}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div
+                className="border p-12 text-center"
+                style={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)' }}
+              >
+                <div
+                  className="w-14 h-14 flex items-center justify-center mx-auto mb-5"
+                  style={{ backgroundColor: 'var(--color-bg-muted)', clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))' }}
+                >
+                  <BookOpen size={24} style={{ color: 'var(--color-text-light)' }} />
+                </div>
+                <h2
+                  className="font-display font-bold text-lg mb-2"
+                  style={{ color: 'var(--color-text)', letterSpacing: '-0.02em' }}
+                >
+                  Chưa có prompt nào
+                </h2>
+                <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                  Hãy thử chatbot Tạo Prompt Học Tập — prompt đã lưu sẽ hiển thị tại đây.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Reference tab */}
+        {activeTab === 'reference' && (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {referencePrompts.map((prompt) => (
+              <PromptCard
+                key={prompt.id}
+                title={prompt.title}
+                subtitle={prompt.description}
+                content={prompt.content}
+                badge={prompt.category}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

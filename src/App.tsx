@@ -8,6 +8,10 @@ import Lessons from './pages/Lessons';
 import PromptCreator from './pages/PromptCreator';
 import PromptLibrary from './pages/PromptLibrary';
 import Textbooks from './pages/Textbooks';
+import Profile from './pages/Profile';
+import AiGuideChatbot from './pages/chatbots/AiGuideChatbot';
+import StudyPromptChatbot from './pages/chatbots/StudyPromptChatbot';
+import GeneralPromptChatbot from './pages/chatbots/GeneralPromptChatbot';
 
 function App() {
   return (
@@ -18,11 +22,15 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/guides" element={<Guides />} />
             <Route path="/ai-tools" element={<AiTools />} />
+            <Route path="/ai-tools/huong-dan-ai" element={<AiGuideChatbot />} />
+            <Route path="/ai-tools/prompt-hoc-tap" element={<StudyPromptChatbot />} />
+            <Route path="/ai-tools/prompt-da-dung" element={<GeneralPromptChatbot />} />
             <Route path="/lessons" element={<Lessons />} />
             <Route path="/prompt-creator" element={<PromptCreator />} />
             <Route path="/prompts" element={<PromptLibrary />} />
             <Route path="/textbooks" element={<Textbooks />} />
-            {/* Legacy redirect */}
+            <Route path="/profile" element={<Profile />} />
+            {/* Legacy redirects */}
             <Route path="/dashboard" element={<Navigate to="/" replace />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

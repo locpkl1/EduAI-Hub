@@ -5,7 +5,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Space Grotesk', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        display: ['Syne', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       colors: {
@@ -32,8 +33,12 @@ export default {
       },
       boxShadow: {
         card: '0 1px 4px 0 rgba(0,0,0,0.06), 0 4px 16px -4px rgba(0,0,0,0.08)',
-        'card-hover': '0 4px 24px -4px rgba(0,0,0,0.14)',
-        glow: '0 0 24px -6px var(--color-primary)',
+        'card-hover': '0 4px 32px -4px rgba(0,0,0,0.16)',
+        glow: '0 0 32px -8px var(--color-primary)',
+      },
+      letterSpacing: {
+        display: '-0.03em',
+        tight: '-0.02em',
       },
     },
   },

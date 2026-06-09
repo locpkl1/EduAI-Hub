@@ -1,4 +1,4 @@
-import { Outlet, NavLink, Link } from 'react-router-dom';
+import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
   Brain,
@@ -10,7 +10,7 @@ import {
   ChevronDown,
   BookOpen,
   Library,
-  Sparkles,
+  User,
   ExternalLink,
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
@@ -50,12 +50,21 @@ function UserAvatar({ name, avatarUrl }: { name: string; avatarUrl: string }) {
         alt={name}
         referrerPolicy="no-referrer"
         onError={() => setErr(true)}
-        className="w-8 h-8 rounded-full object-cover border-2 border-primary/30"
+        className="w-8 h-8 object-cover border-2"
+        style={{ borderRadius: '6px', borderColor: 'var(--color-primary)' }}
       />
     );
   }
   return (
-    <span className="w-8 h-8 rounded-full bg-primary text-bg flex items-center justify-center text-xs font-bold border-2 border-primary/30">
+    <span
+      className="w-8 h-8 flex items-center justify-center text-xs font-bold border-2"
+      style={{
+        borderRadius: '6px',
+        backgroundColor: 'var(--color-primary)',
+        color: '#ffffff',
+        borderColor: 'var(--color-primary)',
+      }}
+    >
       {getInitials(name)}
     </span>
   );
@@ -76,11 +85,11 @@ export default function Layout() {
   const [dark, toggleDark] = useDarkMode();
   const userRef = useRef<HTMLDivElement>(null);
   const resourcesRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const showUser = Boolean(user) && !loading;
   const userLabel = displayName || user?.email?.split('@')[0] || 'Tài khoản';
 
-  // Close dropdowns on outside click
   useEffect(() => {
     function handle(e: MouseEvent) {
       if (userRef.current && !userRef.current.contains(e.target as Node)) setUserMenuOpen(false);
@@ -98,23 +107,26 @@ export default function Layout() {
         style={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)' }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 gap-4">
+          <div className="flex items-center justify-between h-[60px] gap-4">
 
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2.5 flex-shrink-0 group">
               <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105"
-                style={{ backgroundColor: 'var(--color-primary)' }}
+                className="w-8 h-7 flex items-center justify-center transition-transform group-hover:scale-105"
+                style={{ backgroundColor: 'var(--color-primary)', clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))' }}
               >
-                <Brain className="w-4.5 h-4.5" style={{ color: 'var(--color-bg)' }} size={18} />
+                <Brain size={16} color="#ffffff" />
               </div>
-              <span className="font-bold text-base hidden sm:block" style={{ color: 'var(--color-text)' }}>
-                Edu-AI Hub
+              <span
+                className="font-display font-800 text-base hidden sm:block tracking-tight"
+                style={{ color: 'var(--color-text)', letterSpacing: '-0.03em' }}
+              >
+                Edu<span style={{ color: 'var(--color-primary)' }}>-AI</span> Hub
               </span>
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-1 flex-1 justify-center">
+            <nav className="hidden md:flex items-center gap-0.5 flex-1 justify-center">
               {navItems.map((item) => (
                 <NavLink
                   key={item.to}
@@ -133,7 +145,7 @@ export default function Layout() {
                 <button
                   type="button"
                   onClick={() => setResourcesOpen((p) => !p)}
-                  className="nav-link text-sm font-medium flex items-center gap-1"
+                  className="nav-link text-sm font-medium flex items-center gap-1 cursor-pointer"
                 >
                   Tài Nguyên
                   <ChevronDown
@@ -143,25 +155,33 @@ export default function Layout() {
                 </button>
                 {resourcesOpen && (
                   <div
-                    className="absolute top-full left-0 mt-2 w-48 rounded-xl border shadow-card-hover z-50 overflow-hidden"
-                    style={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)' }}
+                    className="absolute top-full left-0 mt-3 w-52 border shadow-card-hover z-50 overflow-hidden"
+                    style={{
+                      backgroundColor: 'var(--color-bg-card)',
+                      borderColor: 'var(--color-border)',
+                    }}
                   >
                     <NavLink
                       to="/prompts"
                       onClick={() => setResourcesOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-bg-muted transition-colors"
+                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors"
                       style={{ color: 'var(--color-text)' }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-bg-muted)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                     >
-                      <Library size={15} style={{ color: 'var(--color-primary)' }} />
+                      <Library size={14} style={{ color: 'var(--color-primary)' }} />
                       Kho Prompt
                     </NavLink>
+                    <div style={{ borderTop: '1px solid var(--color-border)' }} />
                     <NavLink
                       to="/textbooks"
                       onClick={() => setResourcesOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-bg-muted transition-colors"
-                      style={{ color: 'var(--color-text)', borderTop: '1px solid var(--color-border)' }}
+                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors"
+                      style={{ color: 'var(--color-text)' }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-bg-muted)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                     >
-                      <BookOpen size={15} style={{ color: 'var(--color-primary)' }} />
+                      <BookOpen size={14} style={{ color: 'var(--color-primary)' }} />
                       Sách Giáo Khoa
                     </NavLink>
                   </div>
@@ -175,14 +195,13 @@ export default function Layout() {
               <button
                 type="button"
                 onClick={toggleDark}
-                className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors hover:bg-bg-muted"
+                className="w-8 h-8 flex items-center justify-center transition-colors"
+                style={{ color: 'var(--color-text-muted)' }}
                 aria-label={dark ? 'Chế độ sáng' : 'Chế độ tối'}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-bg-muted)')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
               >
-                {dark ? (
-                  <Sun size={16} style={{ color: 'var(--color-text-muted)' }} />
-                ) : (
-                  <Moon size={16} style={{ color: 'var(--color-text-muted)' }} />
-                )}
+                {dark ? <Sun size={16} /> : <Moon size={16} />}
               </button>
 
               {/* User */}
@@ -191,33 +210,50 @@ export default function Layout() {
                   <button
                     type="button"
                     onClick={() => setUserMenuOpen((p) => !p)}
-                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-bg-muted transition-colors"
+                    className="flex items-center gap-2 px-2 py-1.5 transition-colors"
+                    style={{ color: 'var(--color-text)' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-bg-muted)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                   >
                     <UserAvatar name={userLabel} avatarUrl={avatarUrl} />
-                    <span className="text-sm font-medium hidden sm:block max-w-[120px] truncate" style={{ color: 'var(--color-text)' }}>
+                    <span className="text-sm font-medium hidden sm:block max-w-[120px] truncate">
                       {userLabel}
                     </span>
-                    <ChevronDown size={14} style={{ color: 'var(--color-text-muted)' }} />
+                    <ChevronDown size={13} style={{ color: 'var(--color-text-muted)' }} />
                   </button>
                   {userMenuOpen && (
                     <div
-                      className="absolute right-0 mt-2 w-44 rounded-xl border shadow-card-hover z-50 p-1.5"
+                      className="absolute right-0 mt-2 w-48 border shadow-card-hover z-50 overflow-hidden"
                       style={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)' }}
                     >
                       <button
                         type="button"
-                        onClick={() => { setUserMenuOpen(false); signOut(); }}
-                        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-bg-muted transition-colors"
+                        onClick={() => { setUserMenuOpen(false); navigate('/profile'); }}
+                        className="w-full flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-colors text-left"
                         style={{ color: 'var(--color-text)' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-bg-muted)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                       >
-                        <LogOut size={15} />
+                        <User size={14} />
+                        Thông Tin Cá Nhân
+                      </button>
+                      <div style={{ borderTop: '1px solid var(--color-border)' }} />
+                      <button
+                        type="button"
+                        onClick={() => { setUserMenuOpen(false); signOut(); }}
+                        className="w-full flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-colors text-left"
+                        style={{ color: 'var(--color-text)' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-bg-muted)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                      >
+                        <LogOut size={14} />
                         Đăng xuất
                       </button>
                     </div>
                   )}
                 </div>
               ) : loading ? (
-                <div className="w-8 h-8 rounded-full bg-bg-muted animate-pulse" />
+                <div className="w-8 h-8 bg-bg-muted animate-pulse" style={{ borderRadius: '6px' }} />
               ) : (
                 <button
                   type="button"
@@ -233,14 +269,13 @@ export default function Layout() {
               <button
                 type="button"
                 onClick={() => setMobileOpen((p) => !p)}
-                className="md:hidden w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg-muted transition-colors"
+                className="md:hidden w-8 h-8 flex items-center justify-center transition-colors"
+                style={{ color: 'var(--color-text-muted)' }}
                 aria-label={mobileOpen ? 'Đóng menu' : 'Mở menu'}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-bg-muted)')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
               >
-                {mobileOpen ? (
-                  <X size={18} style={{ color: 'var(--color-text-muted)' }} />
-                ) : (
-                  <Menu size={18} style={{ color: 'var(--color-text-muted)' }} />
-                )}
+                {mobileOpen ? <X size={18} /> : <Menu size={18} />}
               </button>
             </div>
           </div>
@@ -252,7 +287,7 @@ export default function Layout() {
             className="md:hidden border-t"
             style={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)' }}
           >
-            <nav className="px-4 py-3 space-y-1">
+            <nav className="px-4 py-3 space-y-0.5">
               {navItems.map((item) => (
                 <NavLink
                   key={item.to}
@@ -260,41 +295,64 @@ export default function Layout() {
                   end={item.exact}
                   onClick={() => setMobileOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                      isActive ? 'active nav-link' : 'nav-link'
+                    `flex items-center px-3 py-2.5 text-sm font-medium transition-colors ${
+                      isActive ? 'text-primary' : ''
                     }`
                   }
+                  style={{ color: 'var(--color-text-muted)' }}
                 >
                   {item.label}
                 </NavLink>
               ))}
-              <div
-                className="pt-1 border-t"
-                style={{ borderColor: 'var(--color-border)' }}
-              >
-                <p className="px-3 py-2 text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--color-text-light)' }}>
+              <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '8px', marginTop: '8px' }}>
+                <p className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--color-text-light)' }}>
                   Tài Nguyên
                 </p>
                 <NavLink
                   to="/prompts"
                   onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) => `flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium nav-link ${isActive ? 'active' : ''}`}
+                  className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium"
+                  style={{ color: 'var(--color-text-muted)' }}
                 >
-                  <Library size={15} />
+                  <Library size={14} />
                   Kho Prompt
                 </NavLink>
                 <NavLink
                   to="/textbooks"
                   onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) => `flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium nav-link ${isActive ? 'active' : ''}`}
+                  className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium"
+                  style={{ color: 'var(--color-text-muted)' }}
                 >
-                  <BookOpen size={15} />
+                  <BookOpen size={14} />
                   Sách Giáo Khoa
                 </NavLink>
               </div>
 
+              {showUser && (
+                <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '8px', marginTop: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => { setMobileOpen(false); navigate('/profile'); }}
+                    className="w-full flex items-center gap-2 px-3 py-2.5 text-sm font-medium"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
+                    <User size={14} />
+                    Thông Tin Cá Nhân
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setMobileOpen(false); signOut(); }}
+                    className="w-full flex items-center gap-2 px-3 py-2.5 text-sm font-medium"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
+                    <LogOut size={14} />
+                    Đăng xuất
+                  </button>
+                </div>
+              )}
+
               {!showUser && (
-                <div className="pt-2 border-t" style={{ borderColor: 'var(--color-border)' }}>
+                <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '12px', marginTop: '8px' }}>
                   <button
                     type="button"
                     onClick={() => { setMobileOpen(false); signInWithGoogle(); }}
@@ -302,26 +360,6 @@ export default function Layout() {
                   >
                     <GoogleIcon />
                     Đăng nhập bằng Google
-                  </button>
-                </div>
-              )}
-
-              {showUser && (
-                <div
-                  className="flex items-center justify-between pt-2 border-t"
-                  style={{ borderColor: 'var(--color-border)' }}
-                >
-                  <div className="flex items-center gap-2 px-2">
-                    <UserAvatar name={userLabel} avatarUrl={avatarUrl} />
-                    <span className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>{userLabel}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => { setMobileOpen(false); signOut(); }}
-                    className="p-2 rounded-lg hover:bg-bg-muted transition-colors"
-                    style={{ color: 'var(--color-text-muted)' }}
-                  >
-                    <LogOut size={16} />
                   </button>
                 </div>
               )}
@@ -336,42 +374,53 @@ export default function Layout() {
 
       {/* Footer */}
       <footer
-        className="mt-16 border-t py-8"
+        className="mt-20 border-t py-8"
         style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg-card)' }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div
-                className="w-7 h-7 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: 'var(--color-primary)' }}
-              >
-                <Brain size={15} style={{ color: 'var(--color-bg)' }} />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <div
+                  className="w-7 h-6 flex items-center justify-center"
+                  style={{ backgroundColor: 'var(--color-primary)', clipPath: 'polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px))' }}
+                >
+                  <Brain size={13} color="#ffffff" />
+                </div>
+                <span className="font-display font-bold text-sm tracking-tight" style={{ color: 'var(--color-text)', letterSpacing: '-0.02em' }}>
+                  Edu-AI Hub
+                </span>
               </div>
-              <span className="font-bold text-sm" style={{ color: 'var(--color-text)' }}>Edu-AI Hub</span>
-              <span className="text-xs font-mono-code" style={{ color: 'var(--color-text-light)' }}>v1.0</span>
+              <p className="text-xs" style={{ color: 'var(--color-text-light)' }}>
+                Giúp học sinh Việt Nam học thông minh hơn cùng AI
+              </p>
             </div>
-            <p className="text-xs text-center" style={{ color: 'var(--color-text-light)' }}>
-              Dự án học sinh sáng tạo — Giúp học sinh Việt Nam học thông minh hơn cùng AI
-            </p>
-            <div className="flex items-center gap-3">
-              <a
-                href="https://chatgpt.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs flex items-center gap-1 hover:underline"
-                style={{ color: 'var(--color-text-light)' }}
+
+            <div className="flex items-center gap-4">
+              <span className="text-xs" style={{ color: 'var(--color-text-light)' }}>Thực hành trên:</span>
+              <a href="https://chatgpt.com" target="_blank" rel="noopener noreferrer"
+                className="text-xs flex items-center gap-1 transition-colors"
+                style={{ color: 'var(--color-text-muted)' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-primary)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-muted)')}
               >
                 ChatGPT <ExternalLink size={10} />
               </a>
-              <a
-                href="https://gemini.google.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs flex items-center gap-1 hover:underline"
-                style={{ color: 'var(--color-text-light)' }}
+              <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer"
+                className="text-xs flex items-center gap-1 transition-colors"
+                style={{ color: 'var(--color-text-muted)' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-primary)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-muted)')}
               >
                 Gemini <ExternalLink size={10} />
+              </a>
+              <a href="https://claude.ai" target="_blank" rel="noopener noreferrer"
+                className="text-xs flex items-center gap-1 transition-colors"
+                style={{ color: 'var(--color-text-muted)' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-primary)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-muted)')}
+              >
+                Claude <ExternalLink size={10} />
               </a>
             </div>
           </div>

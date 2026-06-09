@@ -28,9 +28,7 @@ export default function ProfileCompletionModal() {
   useEffect(() => {
     if (!show) return;
     document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = '';
-    };
+    return () => { document.body.style.overflow = ''; };
   }, [show]);
 
   if (!show) return null;
@@ -40,15 +38,10 @@ export default function ProfileCompletionModal() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!canSubmit || !grade) return;
-
     setSaving(true);
     setError('');
     try {
-      await updateProfile({
-        full_name: fullName.trim(),
-        grade,
-        school: school.trim(),
-      });
+      await updateProfile({ full_name: fullName.trim(), grade, school: school.trim() });
     } catch {
       setError('Không thể lưu thông tin. Vui lòng thử lại.');
     } finally {
@@ -63,95 +56,130 @@ export default function ProfileCompletionModal() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="profile-modal-title"
-        className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-md overflow-hidden shadow-2xl"
+        style={{ backgroundColor: 'var(--color-bg-card)', border: '1px solid var(--color-border)' }}
       >
-        <div className="bg-blue-900 px-6 py-5 text-white">
+        {/* Header */}
+        <div
+          className="px-6 py-5"
+          style={{ backgroundColor: 'var(--color-primary)' }}
+        >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
-              <GraduationCap className="w-5 h-5" />
+            <div
+              className="w-9 h-9 flex items-center justify-center flex-shrink-0"
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))',
+              }}
+            >
+              <GraduationCap size={18} color="#ffffff" />
             </div>
             <div>
-              <h2 id="profile-modal-title" className="text-lg font-semibold">
+              <h2
+                id="profile-modal-title"
+                className="font-display font-bold text-base"
+                style={{ color: '#ffffff', letterSpacing: '-0.02em' }}
+              >
                 Hoàn thiện hồ sơ
               </h2>
-              <p className="text-sm text-blue-100 mt-0.5">
-                Giúp EduAI-Hub cá nhân hóa trải nghiệm học tập cho bạn
+              <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.75)' }}>
+                Giúp EduAI-Hub cá nhân hóa trải nghiệm cho bạn
               </p>
             </div>
           </div>
         </div>
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          {/* Full name */}
           <div>
-            <label htmlFor="profile-full-name" className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label
+              htmlFor="modal-full-name"
+              className="block text-xs font-bold uppercase tracking-wider mb-2"
+              style={{ color: 'var(--color-text-muted)', letterSpacing: '0.1em' }}
+            >
               Tên của bạn
             </label>
             <input
-              id="profile-full-name"
+              id="modal-full-name"
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Nhập tên hiển thị"
-              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent"
+              className="input-field"
               required
             />
           </div>
 
+          {/* Grade */}
           <div>
-            <label htmlFor="profile-grade" className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label
+              className="block text-xs font-bold uppercase tracking-wider mb-2"
+              style={{ color: 'var(--color-text-muted)', letterSpacing: '0.1em' }}
+            >
               Khối đang học
             </label>
-            <select
-              id="profile-grade"
-              value={grade}
-              onChange={(e) => setGrade(e.target.value ? (Number(e.target.value) as Grade) : '')}
-              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent"
-              required
-            >
-              <option value="">Chọn khối</option>
+            <div className="flex gap-2">
               {GRADE_OPTIONS.map((g) => (
-                <option key={g} value={g}>
-                  Khối {g}
-                </option>
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => setGrade(g)}
+                  className="flex-1 py-2.5 text-sm font-semibold border-2 transition-all duration-150"
+                  style={
+                    grade === g
+                      ? { backgroundColor: 'var(--color-primary)', color: '#ffffff', borderColor: 'var(--color-primary)' }
+                      : { backgroundColor: 'transparent', color: 'var(--color-text-muted)', borderColor: 'var(--color-border)' }
+                  }
+                >
+                  Lớp {g}
+                </button>
               ))}
-            </select>
+            </div>
           </div>
 
+          {/* School */}
           <div>
-            <label htmlFor="profile-school" className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label
+              htmlFor="modal-school"
+              className="block text-xs font-bold uppercase tracking-wider mb-2"
+              style={{ color: 'var(--color-text-muted)', letterSpacing: '0.1em' }}
+            >
               Tên trường THPT
             </label>
             <input
-              id="profile-school"
+              id="modal-school"
               type="text"
               value={school}
               onChange={(e) => setSchool(e.target.value)}
               placeholder="VD: THPT Nguyễn Huệ"
-              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent"
+              className="input-field"
               required
             />
           </div>
 
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+            <p
+              className="text-xs border px-3 py-2.5"
+              style={{ color: '#dc2626', backgroundColor: '#fef2f2', borderColor: '#fecaca' }}
+            >
               {error}
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={!canSubmit || saving}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-900 text-white rounded-lg font-medium text-sm hover:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {saving ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Đang lưu...
-              </>
-            ) : (
-              'Lưu thông tin'
-            )}
-          </button>
+          <div className="pt-1">
+            <button
+              type="submit"
+              disabled={!canSubmit || saving}
+              className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? (
+                <><Loader2 size={14} className="animate-spin" /> Đang lưu...</>
+              ) : (
+                'Lưu thông tin'
+              )}
+            </button>
+          </div>
         </form>
       </div>
     </div>

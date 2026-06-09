@@ -65,18 +65,28 @@ export default function Modal({
       <div
         role="dialog"
         aria-modal="true"
-        className={`relative bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full ${sizeClasses[size]} max-h-[90vh] flex flex-col transition-all duration-200 ${
+        className={`relative shadow-2xl w-full ${sizeClasses[size]} max-h-[90vh] flex flex-col transition-all duration-200 ${
           visible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-2'
         }`}
+        style={{ backgroundColor: 'var(--color-bg-card)', border: '1px solid var(--color-border)' }}
         onClick={(e) => e.stopPropagation()}
       >
         {showCloseButton && (
           <button
             onClick={onClose}
-            className="absolute top-3 right-3 z-10 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            className="absolute top-3 right-3 z-10 p-2 transition-colors"
+            style={{ color: 'var(--color-text-muted)' }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--color-bg-muted)';
+              (e.currentTarget as HTMLElement).style.color = 'var(--color-text)';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
+              (e.currentTarget as HTMLElement).style.color = 'var(--color-text-muted)';
+            }}
             aria-label="Đóng"
           >
-            <X className="w-5 h-5" />
+            <X size={18} />
           </button>
         )}
         {children}
