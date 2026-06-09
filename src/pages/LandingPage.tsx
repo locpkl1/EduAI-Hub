@@ -9,120 +9,155 @@ import {
   Target,
   Zap,
   Shield,
-  ExternalLink,
   ChevronRight,
-  Lightbulb,
   Copy,
   TrendingUp,
+  Users,
+  BarChart2,
+  Layers,
 } from 'lucide-react';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
-const features = [
-  {
-    icon: Brain,
-    title: 'Học cách dùng AI',
-    desc: 'Không chỉ dùng AI để trả lời — mà dạy bạn giao tiếp với AI hiệu quả',
-    color: 'primary',
-  },
-  {
-    icon: Target,
-    title: 'Prompt chính xác',
-    desc: 'Tạo và lưu trữ các prompt học tập được tối ưu theo từng môn, từng mục tiêu',
-    color: 'accent',
-  },
-  {
-    icon: Shield,
-    title: 'Học có trách nhiệm',
-    desc: 'Hiểu giới hạn của AI, kiểm chứng thông tin và không phụ thuộc vào máy móc',
-    color: 'success',
-  },
-  {
-    icon: Zap,
-    title: 'Tiết kiệm thời gian',
-    desc: 'Công cụ AI tích hợp giúp tóm tắt, ôn tập, lập kế hoạch học nhanh hơn',
-    color: 'warning',
-  },
+/* ─────────────────────────────────────────────────────── data ── */
+
+const stats = [
+  { value: '3', label: 'Chatbot AI chuyên biệt' },
+  { value: '50+', label: 'Prompt mẫu chất lượng' },
+  { value: '3', label: 'Bộ sách giáo khoa' },
+  { value: '∞', label: 'Tiềm năng học tập' },
+];
+
+const chartData = [
+  { name: 'T2', prompts: 3, hoc: 45 },
+  { name: 'T3', prompts: 7, hoc: 60 },
+  { name: 'T4', prompts: 5, hoc: 52 },
+  { name: 'T5', prompts: 12, hoc: 78 },
+  { name: 'T6', prompts: 9, hoc: 85 },
+  { name: 'T7', prompts: 15, hoc: 90 },
+  { name: 'CN', prompts: 11, hoc: 72 },
 ];
 
 const previewLessons = [
   {
     title: 'Cách biến AI thành gia sư cá nhân',
     tag: 'Chiến lược',
-    tagType: 'primary',
-    desc: 'Thiết lập vai trò cho AI, đặt câu hỏi liên tục và xây dựng phiên học hiệu quả',
+    tagColor: '#4d9eff',
+    desc: 'Thiết lập vai trò cho AI, đặt câu hỏi liên tục và xây dựng phiên học hiệu quả.',
     readTime: '5 phút',
   },
   {
     title: 'Học tiếng Anh với AI — từ A đến Z',
     tag: 'Tiếng Anh',
-    tagType: 'accent',
-    desc: 'Từ luyện nói với AI đến ôn grammar, viết luận và mở rộng vốn từ tự nhiên',
+    tagColor: '#a78bfa',
+    desc: 'Từ luyện nói với AI đến ôn grammar, viết luận và mở rộng vốn từ tự nhiên.',
     readTime: '8 phút',
   },
   {
     title: 'Những lỗi sai thường gặp khi dùng AI học tập',
     tag: 'Kinh nghiệm',
-    tagType: 'warning',
-    desc: 'Copy paste, tin tuyệt đối, hỏi quá mơ hồ — và cách khắc phục từng lỗi',
+    tagColor: '#fb923c',
+    desc: 'Copy paste, tin tuyệt đối, hỏi quá mơ hồ — và cách khắc phục từng lỗi.',
     readTime: '6 phút',
   },
 ];
 
-const stats = [
-  { value: '12+', label: 'Công cụ AI tích hợp' },
-  { value: '50+', label: 'Prompt mẫu chất lượng' },
-  { value: '3', label: 'Bộ sách giáo khoa' },
-  { value: '∞', label: 'Tiềm năng học tập' },
-];
+/* ─────────────────────────────────────────────── main component ── */
 
 export default function LandingPage() {
   const { user, signInWithGoogle } = useAuth();
 
   return (
-    <div style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}>
-
-      {/* ── HERO ── */}
-      <section className="relative overflow-hidden">
-        {/* Grid background */}
+    <div>
+      {/* ══════════════════════════════════════════════ HERO ══ */}
+      <section className="relative overflow-hidden" style={{ background: 'var(--color-bg)' }}>
+        {/* Ambient glow orbs */}
         <div
-          className="absolute inset-0 bg-grid opacity-40"
-          style={{ maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 80%)' }}
+          className="pointer-events-none absolute -top-48 -left-48 w-[600px] h-[600px] rounded-full opacity-20"
+          style={{ background: 'radial-gradient(circle, #3b82f6 0%, transparent 70%)', filter: 'blur(80px)' }}
+        />
+        <div
+          className="pointer-events-none absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-10"
+          style={{ background: 'radial-gradient(circle, #06b6d4 0%, transparent 70%)', filter: 'blur(100px)' }}
         />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20 lg:pt-24 lg:pb-28">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        {/* Grid overlay */}
+        <div
+          className="absolute inset-0 bg-grid opacity-30"
+          style={{ maskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%)' }}
+        />
 
-            {/* Left */}
-            <div className="space-y-7 animate-fade-in-up">
-              <div className="flex items-center gap-3">
-                <span className="section-label">
-                  <span
-                    className="w-1.5 h-1.5 rounded-full animate-pulse-dot"
-                    style={{ backgroundColor: 'var(--color-primary)' }}
-                  />
-                  Dự án sáng tạo học sinh
-                </span>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 lg:pt-32 lg:pb-32">
+          <div className="grid lg:grid-cols-2 gap-14 items-center">
+
+            {/* Left copy */}
+            <div className="space-y-8 animate-fade-in-up">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2.5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-widest"
+                style={{
+                  border: '1px solid color-mix(in srgb, var(--color-primary) 40%, transparent)',
+                  color: 'var(--color-primary)',
+                  background: 'color-mix(in srgb, var(--color-primary) 8%, transparent)',
+                  backdropFilter: 'blur(8px)',
+                }}>
+                <span className="w-1.5 h-1.5 rounded-full animate-pulse-dot" style={{ backgroundColor: 'var(--color-primary)' }} />
+                Dự án sáng tạo học sinh
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] text-balance">
-                Học thông minh
-                <br />
-                <span style={{ color: 'var(--color-primary)' }}>cùng AI</span>
-                <br />
-                <span style={{ color: 'var(--color-text-muted)', fontSize: '0.75em' }}>
+              {/* Headline */}
+              <div className="space-y-2">
+                <h1
+                  className="font-display font-bold leading-[1.05] text-balance"
+                  style={{ fontSize: 'clamp(2.6rem, 6vw, 4.2rem)', letterSpacing: '-0.03em', color: 'var(--color-text)' }}
+                >
+                  Học thông minh
+                </h1>
+                <h1
+                  className="font-display font-bold leading-[1.05]"
+                  style={{
+                    fontSize: 'clamp(2.6rem, 6vw, 4.2rem)',
+                    letterSpacing: '-0.03em',
+                    background: 'linear-gradient(135deg, #60a5fa 0%, #38bdf8 50%, #34d399 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  cùng AI
+                </h1>
+                <h1
+                  className="font-display font-bold leading-[1.05] text-balance"
+                  style={{
+                    fontSize: 'clamp(1.4rem, 3vw, 2rem)',
+                    letterSpacing: '-0.02em',
+                    color: 'var(--color-text-light)',
+                  }}
+                >
                   không phải nhờ AI
-                </span>
-              </h1>
+                </h1>
+              </div>
 
               <p className="text-base sm:text-lg leading-relaxed max-w-lg text-pretty" style={{ color: 'var(--color-text-muted)' }}>
-                Edu-AI Hub dạy học sinh Việt Nam cách <strong style={{ color: 'var(--color-text)' }}>giao tiếp với AI</strong>,
-                {' '}đặt prompt hiệu quả, kiểm chứng thông tin và biến AI thành công cụ tự học
-                chủ động thay vì phụ thuộc máy móc.
+                Edu-AI Hub dạy học sinh Việt Nam cách{' '}
+                <strong style={{ color: 'var(--color-text)', fontWeight: 600 }}>giao tiếp với AI</strong>,
+                đặt prompt hiệu quả, kiểm chứng thông tin và biến AI thành công cụ tự học chủ động.
               </p>
 
-              <div className="flex flex-wrap gap-3">
-                <Link to="/ai-tools" className="btn-primary flex items-center gap-2">
+              {/* CTAs */}
+              <div className="flex flex-wrap gap-3 items-center">
+                <Link to="/ai-tools" className="group relative overflow-hidden btn-primary flex items-center gap-2">
+                  <span
+                    className="absolute inset-0 -translate-x-full group-hover:translate-x-0 transition-transform duration-500"
+                    style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)' }}
+                  />
                   Khám phá Công Cụ AI
-                  <ArrowRight size={16} />
+                  <ArrowRight size={15} />
                 </Link>
                 {!user ? (
                   <button
@@ -136,229 +171,313 @@ export default function LandingPage() {
                 ) : (
                   <Link to="/lessons" className="btn-outline flex items-center gap-2">
                     Xem Bài Học
-                    <ChevronRight size={16} />
+                    <ChevronRight size={15} />
                   </Link>
                 )}
               </div>
 
-              {/* External AI links */}
-              <div className="flex items-center gap-4 pt-2">
-                <span className="text-xs" style={{ color: 'var(--color-text-light)' }}>Thực hành tại:</span>
-                <a
-                  href="https://chatgpt.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-medium flex items-center gap-1 hover:underline"
-                  style={{ color: 'var(--color-text-muted)' }}
-                >
-                  ChatGPT <ExternalLink size={10} />
-                </a>
-                <a
-                  href="https://gemini.google.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-medium flex items-center gap-1 hover:underline"
-                  style={{ color: 'var(--color-text-muted)' }}
-                >
-                  Gemini <ExternalLink size={10} />
-                </a>
+              {/* Trusted by */}
+              <div className="flex items-center gap-3 pt-1">
+                <div className="flex -space-x-2">
+                  {['#3b82f6', '#a78bfa', '#34d399', '#fb923c'].map((c, i) => (
+                    <div
+                      key={i}
+                      className="w-7 h-7 rounded-full border-2 flex items-center justify-center text-[9px] font-bold text-white"
+                      style={{ backgroundColor: c, borderColor: 'var(--color-bg)', zIndex: 4 - i }}
+                    >
+                      {['HS', 'LH', 'MT', 'KT'][i]}
+                    </div>
+                  ))}
+                </div>
+                <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                  Dành riêng cho học sinh lớp 10–12 Việt Nam
+                </span>
               </div>
             </div>
 
-            {/* Right — Mock UI */}
-            <div className="relative hidden lg:block">
-              <MockChatUI />
+            {/* Right — Hero terminal mockup */}
+            <div className="relative hidden lg:flex items-center justify-center">
+              <HeroTerminal />
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── STATS ── */}
-      <section
-        className="border-y"
-        style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg-card)' }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {/* ══════════════════════════════════════════════ STATS ══ */}
+      <div style={{ borderTop: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-px" style={{ background: 'var(--color-border)' }}>
             {stats.map((s) => (
-              <div key={s.label} className="text-center">
-                <p className="text-3xl font-bold font-mono" style={{ color: 'var(--color-primary)' }}>
+              <div
+                key={s.label}
+                className="flex flex-col items-center justify-center py-6 px-4 text-center"
+                style={{ background: 'var(--color-bg)' }}
+              >
+                <p
+                  className="font-display font-bold"
+                  style={{ fontSize: '2.2rem', letterSpacing: '-0.04em', color: 'var(--color-primary)' }}
+                >
                   {s.value}
                 </p>
-                <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>{s.label}</p>
+                <p className="text-xs mt-1 text-pretty" style={{ color: 'var(--color-text-muted)' }}>{s.label}</p>
               </div>
             ))}
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* ── FEATURES ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center mb-12">
-          <span className="section-label mb-4 inline-flex">Tại sao chọn Edu-AI Hub</span>
-          <h2 className="text-3xl sm:text-4xl font-bold mt-4 text-balance">
-            Nền tảng học AI đầu tiên
-            <br />
-            <span style={{ color: 'var(--color-primary)' }}>dành riêng cho học sinh Việt</span>
-          </h2>
+      {/* ══════════════════════════════════════════ BENTO FEATURES ══ */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="mb-14 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] mb-3" style={{ color: 'var(--color-primary)' }}>
+              Tại sao chọn Edu-AI Hub
+            </p>
+            <h2
+              className="font-display font-bold text-balance"
+              style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', letterSpacing: '-0.03em', color: 'var(--color-text)' }}
+            >
+              Nền tảng học AI đầu tiên
+              <br />
+              <span style={{ color: 'var(--color-primary)' }}>dành riêng cho học sinh Việt</span>
+            </h2>
+          </div>
+          <Link to="/guides" className="btn-outline flex-shrink-0 flex items-center gap-2 text-sm self-start sm:self-auto">
+            Xem hướng dẫn <ArrowRight size={14} />
+          </Link>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {features.map((f) => (
-            <FeatureCard key={f.title} {...f} />
-          ))}
-        </div>
-      </section>
+        {/* Bento grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 auto-rows-auto">
 
-      {/* ── HOW IT WORKS — asymmetric grid ── */}
-      <section
-        className="py-20 border-t"
-        style={{ borderColor: 'var(--color-border)' }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Steps */}
-            <div>
-              <span className="section-label mb-4 inline-flex">Cách hoạt động</span>
-              <h2 className="text-3xl font-bold mt-4 mb-8 text-balance">
-                Từ người dùng AI<br />thành người <span style={{ color: 'var(--color-primary)' }}>master AI</span>
-              </h2>
-              <div className="space-y-6">
-                {[
-                  { step: '01', title: 'Học cách đặt câu hỏi', desc: 'Hiểu cấu trúc prompt: vai trò, ngữ cảnh, mục tiêu, định dạng đầu ra' },
-                  { step: '02', title: 'Thực hành với chatbot', desc: 'Dùng chatbot tích hợp để luyện tập, nhận phản hồi ngay lập tức' },
-                  { step: '03', title: 'Lưu & chia sẻ prompt', desc: 'Xây dựng kho prompt cá nhân, tham khảo mẫu prompt chất lượng' },
-                  { step: '04', title: 'Đọc bài học kinh nghiệm', desc: 'Học từ những chia sẻ thực tế về cách dùng AI hiệu quả' },
-                ].map((item) => (
-                  <div key={item.step} className="flex gap-5">
-                    <div
-                      className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center font-mono font-bold text-sm"
-                      style={{ backgroundColor: 'var(--color-bg-muted)', color: 'var(--color-primary)', border: '1px solid var(--color-border)' }}
-                    >
-                      {item.step}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-1" style={{ color: 'var(--color-text)' }}>{item.title}</h3>
-                      <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
+          {/* Large card — spans 2 cols on lg */}
+          <BentoCard className="lg:col-span-2" accent="#3b82f6">
+            <div className="flex flex-col h-full gap-4">
+              <div className="w-10 h-10 flex items-center justify-center" style={{ background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.25)' }}>
+                <Brain size={20} color="#3b82f6" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-display font-bold text-xl mb-2" style={{ letterSpacing: '-0.02em', color: 'var(--color-text)' }}>
+                  Học cách dùng AI
+                </h3>
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+                  Không chỉ dùng AI để trả lời — mà dạy bạn giao tiếp với AI hiệu quả, xây dựng tư duy đặt câu hỏi và kiểm chứng kết quả.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-sm font-medium" style={{ color: '#3b82f6' }}>
+                Bắt đầu học <ArrowRight size={14} />
               </div>
             </div>
+          </BentoCard>
 
-            {/* Prompt preview card */}
-            <div className="space-y-4">
-              <MockPromptCard />
-              <div className="grid grid-cols-2 gap-4">
-                <MockMiniCard icon={BookOpen} title="Sách Giáo Khoa" desc="3 bộ sách, lớp 10–12" link="/textbooks" />
-                <MockMiniCard icon={TrendingUp} title="Bài Học AI" desc="Kinh nghiệm thực tế" link="/lessons" />
+          {/* Small card */}
+          <BentoCard accent="#a78bfa">
+            <div className="w-9 h-9 flex items-center justify-center mb-4" style={{ background: 'rgba(167,139,250,0.12)', border: '1px solid rgba(167,139,250,0.25)' }}>
+              <Target size={18} color="#a78bfa" />
+            </div>
+            <h3 className="font-display font-bold text-lg mb-2" style={{ letterSpacing: '-0.02em', color: 'var(--color-text)' }}>Prompt chính xác</h3>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+              Tạo và lưu trữ các prompt học tập được tối ưu theo từng môn, từng mục tiêu cụ thể.
+            </p>
+          </BentoCard>
+
+          {/* Small card */}
+          <BentoCard accent="#34d399">
+            <div className="w-9 h-9 flex items-center justify-center mb-4" style={{ background: 'rgba(52,211,153,0.12)', border: '1px solid rgba(52,211,153,0.25)' }}>
+              <Shield size={18} color="#34d399" />
+            </div>
+            <h3 className="font-display font-bold text-lg mb-2" style={{ letterSpacing: '-0.02em', color: 'var(--color-text)' }}>Học có trách nhiệm</h3>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+              Hiểu giới hạn của AI, kiểm chứng thông tin và không phụ thuộc vào máy móc.
+            </p>
+          </BentoCard>
+
+          {/* Large card — spans 2 cols on lg */}
+          <BentoCard className="lg:col-span-2" accent="#fb923c">
+            <div className="flex flex-col sm:flex-row gap-6 h-full">
+              <div className="flex-1 space-y-3">
+                <div className="w-9 h-9 flex items-center justify-center" style={{ background: 'rgba(251,146,60,0.12)', border: '1px solid rgba(251,146,60,0.25)' }}>
+                  <Zap size={18} color="#fb923c" />
+                </div>
+                <h3 className="font-display font-bold text-xl" style={{ letterSpacing: '-0.02em', color: 'var(--color-text)' }}>Tiết kiệm thời gian học</h3>
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+                  Chatbot tích hợp giúp bạn luyện tập, đặt câu hỏi và nhận phản hồi ngay lập tức — không cần rời khỏi trang.
+                </p>
               </div>
+              {/* Mini chart decoration */}
+              <div className="hidden sm:flex flex-col justify-center w-40 h-24 flex-shrink-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="ogradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#fb923c" stopOpacity={0.5} />
+                        <stop offset="100%" stopColor="#fb923c" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <Area type="monotone" dataKey="hoc" stroke="#fb923c" strokeWidth={2} fill="url(#ogradient)" dot={false} />
+                  </AreaChart>
+                </ResponsiveContainer>
+                <p className="text-[10px] text-center mt-1" style={{ color: 'var(--color-text-light)' }}>Năng suất học / tuần</p>
+              </div>
+            </div>
+          </BentoCard>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════ AI TOOLS — only 3 chatbots ══ */}
+      <section style={{ borderTop: '1px solid var(--color-border)', background: 'var(--color-bg-card)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="grid lg:grid-cols-2 gap-14 items-center">
+
+            {/* Copy */}
+            <div className="space-y-6">
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em]" style={{ color: 'var(--color-primary)' }}>
+                Công Cụ AI
+              </p>
+              <h2
+                className="font-display font-bold text-balance"
+                style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', letterSpacing: '-0.03em', color: 'var(--color-text)' }}
+              >
+                Ba chatbot AI
+                <br />
+                <span style={{ color: 'var(--color-primary)' }}>chuyên biệt cho học sinh</span>
+              </h2>
+              <p className="text-base leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+                Mỗi chatbot được thiết kế cho một mục đích cụ thể — từ học cách dùng AI, tạo prompt học tập, đến tạo prompt đa dụng cho mọi tình huống.
+              </p>
+              <Link to="/ai-tools" className="btn-primary inline-flex items-center gap-2">
+                Xem tất cả công cụ <ArrowRight size={15} />
+              </Link>
+            </div>
+
+            {/* 3 chatbot cards */}
+            <div className="space-y-3">
+              {[
+                {
+                  icon: MessageSquare,
+                  title: 'Chatbot Hướng Dẫn AI',
+                  desc: 'Học cách dùng AI đúng cách, tránh lỗi thường gặp và xây dựng tư duy AI.',
+                  to: '/ai-tools/huong-dan-ai',
+                  accent: '#3b82f6',
+                  num: '01',
+                },
+                {
+                  icon: Sparkles,
+                  title: 'Chatbot Tạo Prompt Học Tập',
+                  desc: 'Tạo prompt học tập chuyên biệt theo môn học, lớp và mục tiêu cụ thể.',
+                  to: '/ai-tools/prompt-hoc-tap',
+                  accent: '#a78bfa',
+                  num: '02',
+                },
+                {
+                  icon: Layers,
+                  title: 'Chatbot Tạo Prompt Đa Dụng',
+                  desc: 'Chat tự do, tạo prompt cho mọi tình huống — viết lách, công việc, sáng tạo.',
+                  to: '/ai-tools/prompt-da-dung',
+                  accent: '#34d399',
+                  num: '03',
+                },
+              ].map((tool) => (
+                <ChatbotEntryCard key={tool.title} {...tool} />
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── LESSONS PREVIEW ── */}
-      <section
-        className="py-20 border-t"
-        style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg-card)' }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-10 gap-4">
+      {/* ══════════════════════════════════════ DASHBOARD PREVIEW ══ */}
+      <section style={{ borderTop: '1px solid var(--color-border)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="text-center mb-14">
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] mb-3" style={{ color: 'var(--color-primary)' }}>
+              Dashboard học tập
+            </p>
+            <h2
+              className="font-display font-bold text-balance"
+              style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', letterSpacing: '-0.03em', color: 'var(--color-text)' }}
+            >
+              Theo dõi tiến trình
+              <br />
+              <span style={{ color: 'var(--color-primary)' }}>học tập của bạn</span>
+            </h2>
+          </div>
+
+          <DashboardPreview />
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════ LESSONS PREVIEW ══ */}
+      <section style={{ borderTop: '1px solid var(--color-border)', background: 'var(--color-bg-card)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="flex items-end justify-between mb-12 gap-4">
             <div>
-              <span className="section-label mb-3 inline-flex">Bài Học nổi bật</span>
-              <h2 className="text-3xl font-bold mt-3 text-balance">
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] mb-3" style={{ color: 'var(--color-primary)' }}>
+                Bài Học nổi bật
+              </p>
+              <h2
+                className="font-display font-bold text-balance"
+                style={{ fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)', letterSpacing: '-0.03em', color: 'var(--color-text)' }}
+              >
                 Học từ kinh nghiệm
                 <br />
                 <span style={{ color: 'var(--color-primary)' }}>dùng AI thực tế</span>
               </h2>
             </div>
-            <Link
-              to="/lessons"
-              className="btn-outline flex items-center gap-2 flex-shrink-0 text-sm"
-            >
-              Xem tất cả
-              <ArrowRight size={14} />
+            <Link to="/lessons" className="btn-outline flex-shrink-0 flex items-center gap-2 text-sm">
+              Xem tất cả <ArrowRight size={14} />
             </Link>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {previewLessons.map((lesson) => (
-              <LessonCard key={lesson.title} {...lesson} />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {previewLessons.map((l) => (
+              <LessonCard key={l.title} {...l} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── AI TOOLS PREVIEW ── */}
-      <section className="py-20 border-t" style={{ borderColor: 'var(--color-border)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <span className="section-label mb-4 inline-flex">Công Cụ AI</span>
-            <h2 className="text-3xl sm:text-4xl font-bold mt-4 mb-4 text-balance">
-              Trung tâm điều khiển học tập AI
-            </h2>
-            <p className="max-w-xl mx-auto text-base leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
-              Chatbot, trình tạo prompt, gợi ý kế hoạch học, tóm tắt tài liệu — tất cả trong một nơi
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-            {[
-              { icon: MessageSquare, title: 'Chatbot Hướng Dẫn AI', desc: 'Học cách dùng AI đúng cách, tránh lỗi thường gặp', badge: 'Chatbot' },
-              { icon: Sparkles, title: 'Chatbot Tạo Prompt', desc: 'Viết, cải thiện và giải thích prompt hiệu quả', badge: 'Chatbot' },
-              { icon: Lightbulb, title: 'Tạo Prompt Học Tập', desc: 'Tạo prompt theo môn, lớp, mục tiêu cụ thể', badge: 'Công cụ' },
-              { icon: Target, title: 'Gợi Ý Kế Hoạch Học', desc: 'Lập lịch học cá nhân hóa với AI hỗ trợ', badge: 'Công cụ' },
-              { icon: BookOpen, title: 'Tóm Tắt Tài Liệu', desc: 'Rút gọn nội dung dài thành điểm chính cần nhớ', badge: 'Công cụ' },
-              { icon: Brain, title: 'Hỏi Đáp Theo Môn', desc: 'Đặt câu hỏi và luyện tập theo từng môn học', badge: 'Công cụ' },
-            ].map((tool) => (
-              <ToolPreviewCard key={tool.title} {...tool} />
-            ))}
-          </div>
-
-          <div className="text-center">
-            <Link to="/ai-tools" className="btn-primary inline-flex items-center gap-2">
-              Xem tất cả Công Cụ AI
-              <ArrowRight size={16} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA ── */}
-      <section className="py-20 border-t" style={{ borderColor: 'var(--color-border)' }}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* ════════════════════════════════════════════════════ CTA ══ */}
+      <section style={{ borderTop: '1px solid var(--color-border)' }}>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div
-            className="rounded-2xl p-10 sm:p-14 relative overflow-hidden"
-            style={{ backgroundColor: 'var(--color-bg-card)', border: '1px solid var(--color-border)' }}
+            className="relative overflow-hidden px-8 py-16 sm:px-16 sm:py-20 text-center"
+            style={{
+              background: 'linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 10%, var(--color-bg-card)) 0%, var(--color-bg-card) 60%)',
+              border: '1px solid color-mix(in srgb, var(--color-primary) 30%, var(--color-border))',
+            }}
           >
-            {/* Background decoration */}
+            {/* Ambient orb */}
             <div
-              className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-5 -translate-y-1/2 translate-x-1/2"
-              style={{ backgroundColor: 'var(--color-primary)' }}
+              className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full opacity-30"
+              style={{ background: 'radial-gradient(circle, var(--color-primary) 0%, transparent 70%)', filter: 'blur(40px)' }}
             />
-            <div
-              className="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-5 translate-y-1/2 -translate-x-1/2"
-              style={{ backgroundColor: 'var(--color-accent)' }}
-            />
-            <div className="relative">
-              <span className="section-label mb-4 inline-flex">Bắt đầu ngay hôm nay</span>
-              <h2 className="text-3xl sm:text-4xl font-bold mt-4 mb-5 text-balance">
-                Bắt đầu hành trình
+            <div className="relative space-y-6">
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em]" style={{ color: 'var(--color-primary)' }}>
+                Bắt đầu ngay hôm nay
+              </p>
+              <h2
+                className="font-display font-bold text-balance"
+                style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', letterSpacing: '-0.03em', color: 'var(--color-text)' }}
+              >
+                Bắt đầu hành trình học
                 <br />
-                <span style={{ color: 'var(--color-primary)' }}>học thông minh cùng AI</span>
+                <span style={{ color: 'var(--color-primary)' }}>thông minh cùng AI</span>
               </h2>
-              <p className="max-w-lg mx-auto mb-8 leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+              <p className="max-w-lg mx-auto text-base leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
                 Hoàn toàn miễn phí. Không cần cài đặt. Dành cho học sinh lớp 10–12 Việt Nam.
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <Link to="/ai-tools" className="btn-primary flex items-center gap-2">
+              <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                <Link to="/ai-tools" className="group relative overflow-hidden btn-primary flex items-center gap-2">
+                  <span
+                    className="absolute inset-0 -translate-x-full group-hover:translate-x-0 transition-transform duration-500"
+                    style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)' }}
+                  />
                   Bắt đầu học với AI
-                  <ArrowRight size={16} />
+                  <ArrowRight size={15} />
                 </Link>
                 <Link to="/guides" className="btn-outline flex items-center gap-2">
                   Đọc Hướng Dẫn
-                  <ChevronRight size={16} />
+                  <ChevronRight size={15} />
                 </Link>
               </div>
             </div>
@@ -369,230 +488,394 @@ export default function LandingPage() {
   );
 }
 
-/* ── Sub-components ── */
+/* ─────────────────────────────────────────── sub-components ── */
 
-function FeatureCard({ icon: Icon, title, desc, color }: {
-  icon: React.ElementType;
-  title: string;
-  desc: string;
-  color: string;
+function BentoCard({ children, className = '', accent }: {
+  children: React.ReactNode;
+  className?: string;
+  accent?: string;
 }) {
-  const colorMap: Record<string, string> = {
-    primary: 'var(--color-primary)',
-    accent: 'var(--color-accent)',
-    success: 'var(--color-success)',
-    warning: 'var(--color-warning)',
-  };
-  const bgMap: Record<string, string> = {
-    primary: 'var(--color-primary-light)',
-    accent: 'var(--color-accent-light)',
-    success: 'color-mix(in srgb, var(--color-success) 12%, transparent)',
-    warning: 'color-mix(in srgb, var(--color-warning) 12%, transparent)',
-  };
-
   return (
-    <div className="card-hover p-6 space-y-4">
-      <div
-        className="w-10 h-10 rounded-xl flex items-center justify-center"
-        style={{ backgroundColor: bgMap[color] }}
-      >
-        <Icon size={20} style={{ color: colorMap[color] }} />
-      </div>
-      <div>
-        <h3 className="font-semibold mb-2" style={{ color: 'var(--color-text)' }}>{title}</h3>
-        <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>{desc}</p>
-      </div>
+    <div
+      className={`relative p-6 transition-all duration-200 group ${className}`}
+      style={{
+        background: 'var(--color-bg-card)',
+        border: '1px solid var(--color-border)',
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = accent ?? 'var(--color-primary)';
+        (e.currentTarget as HTMLElement).style.boxShadow = `0 0 0 1px ${accent ?? 'var(--color-primary)'}22, 0 8px 32px -8px ${accent ?? 'var(--color-primary)'}33`;
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = 'var(--color-border)';
+        (e.currentTarget as HTMLElement).style.boxShadow = 'none';
+      }}
+    >
+      {children}
     </div>
   );
 }
 
-function LessonCard({ title, tag, tagType, desc, readTime }: {
+function ChatbotEntryCard({ icon: Icon, title, desc, to, accent, num }: {
+  icon: React.ElementType;
+  title: string;
+  desc: string;
+  to: string;
+  accent: string;
+  num: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="group flex items-center gap-5 p-5 transition-all duration-200"
+      style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = accent;
+        (e.currentTarget as HTMLElement).style.background = `color-mix(in srgb, ${accent} 4%, var(--color-bg))`;
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = 'var(--color-border)';
+        (e.currentTarget as HTMLElement).style.background = 'var(--color-bg)';
+      }}
+    >
+      <div
+        className="flex-shrink-0 font-mono font-bold text-2xl w-12 text-right leading-none"
+        style={{ color: `color-mix(in srgb, ${accent} 30%, var(--color-border))`, letterSpacing: '-0.04em' }}
+      >
+        {num}
+      </div>
+      <div
+        className="flex-shrink-0 w-10 h-10 flex items-center justify-center"
+        style={{ background: `color-mix(in srgb, ${accent} 12%, transparent)`, border: `1px solid color-mix(in srgb, ${accent} 30%, transparent)` }}
+      >
+        <Icon size={18} color={accent} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <h3 className="font-semibold text-sm mb-0.5" style={{ color: 'var(--color-text)' }}>{title}</h3>
+        <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>{desc}</p>
+      </div>
+      <ArrowRight size={16} className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: accent }} />
+    </Link>
+  );
+}
+
+function LessonCard({ title, tag, tagColor, desc, readTime }: {
   title: string;
   tag: string;
-  tagType: string;
+  tagColor: string;
   desc: string;
   readTime: string;
 }) {
   return (
-    <Link to="/lessons" className="card-hover p-6 flex flex-col gap-3 block">
+    <Link
+      to="/lessons"
+      className="flex flex-col gap-4 p-6 transition-all duration-200 group"
+      style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = tagColor;
+        (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)';
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = 'var(--color-border)';
+        (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+      }}
+    >
       <div className="flex items-center justify-between gap-2">
-        <span className={`tag tag-${tagType}`}>{tag}</span>
+        <span
+          className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1"
+          style={{ color: tagColor, background: `color-mix(in srgb, ${tagColor} 12%, transparent)` }}
+        >
+          {tag}
+        </span>
         <span className="text-xs font-mono" style={{ color: 'var(--color-text-light)' }}>{readTime}</span>
       </div>
-      <h3 className="font-semibold leading-snug" style={{ color: 'var(--color-text)' }}>{title}</h3>
+      <h3 className="font-display font-bold leading-snug text-balance" style={{ color: 'var(--color-text)', letterSpacing: '-0.02em' }}>{title}</h3>
       <p className="text-sm leading-relaxed flex-1 line-clamp-2" style={{ color: 'var(--color-text-muted)' }}>{desc}</p>
-      <div className="flex items-center gap-1 text-sm font-medium" style={{ color: 'var(--color-primary)' }}>
-        Đọc tiếp <ChevronRight size={14} />
+      <div className="flex items-center gap-1 text-sm font-medium" style={{ color: tagColor }}>
+        Đọc tiếp <ChevronRight size={13} />
       </div>
     </Link>
   );
 }
 
-function ToolPreviewCard({ icon: Icon, title, desc, badge }: {
-  icon: React.ElementType;
-  title: string;
-  desc: string;
-  badge: string;
-}) {
-  return (
-    <Link to="/ai-tools" className="card-hover p-5 flex gap-4 block">
-      <div
-        className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
-        style={{ backgroundColor: 'var(--color-primary-light)' }}
-      >
-        <Icon size={18} style={{ color: 'var(--color-primary)' }} />
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <h3 className="font-semibold text-sm truncate" style={{ color: 'var(--color-text)' }}>{title}</h3>
-          <span
-            className="flex-shrink-0 text-xs px-2 py-0.5 rounded-full font-mono"
-            style={{ backgroundColor: 'var(--color-bg-muted)', color: 'var(--color-text-light)', border: '1px solid var(--color-border)' }}
-          >
-            {badge}
-          </span>
-        </div>
-        <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>{desc}</p>
-      </div>
-    </Link>
-  );
-}
-
-function MockMiniCard({ icon: Icon, title, desc, link }: {
-  icon: React.ElementType;
-  title: string;
-  desc: string;
-  link: string;
-}) {
-  return (
-    <Link to={link} className="card-hover p-4 flex flex-col gap-2 block">
-      <Icon size={18} style={{ color: 'var(--color-primary)' }} />
-      <p className="font-semibold text-sm" style={{ color: 'var(--color-text)' }}>{title}</p>
-      <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{desc}</p>
-    </Link>
-  );
-}
-
-function MockChatUI() {
+function HeroTerminal() {
   const messages = [
-    { role: 'user', text: 'Giúp tôi ôn Toán lớp 12 — tích phân' },
+    { role: 'user', text: 'Giúp tôi tạo prompt ôn Toán lớp 12 — tích phân' },
     {
       role: 'ai',
-      text: 'Tôi sẽ hướng dẫn bạn cách đặt prompt hiệu quả:\n\n"Tôi là HS lớp 12, ôn Tích phân — cho tôi 3 công thức cơ bản, 1 ví dụ mỗi công thức, sau đó cho 2 bài tập mức trung bình."',
+      text: 'Đây là prompt tối ưu:\n\n"Tôi là HS lớp 12, ôn tích phân. Cho tôi 3 công thức cơ bản, 1 ví dụ mỗi công thức và 2 bài tập mức trung bình."',
     },
     { role: 'user', text: 'Vì sao prompt này hiệu quả hơn?' },
-    { role: 'ai', text: 'Vì nó có: Ngữ cảnh (lớp 12), Mục tiêu (3 công thức), Định dạng (ví dụ + bài tập), Độ khó (trung bình). AI sẽ biết chính xác bạn cần gì.' },
+    {
+      role: 'ai',
+      text: 'Vì có đủ 4 yếu tố:\n→ Ngữ cảnh  → Mục tiêu\n→ Định dạng  → Độ khó\nAI sẽ biết chính xác bạn cần gì.',
+    },
   ];
 
   return (
     <div
-      className="rounded-2xl border overflow-hidden shadow-card"
-      style={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)' }}
+      className="w-full max-w-[480px] overflow-hidden shadow-2xl"
+      style={{
+        background: 'color-mix(in srgb, var(--color-bg-card) 80%, transparent)',
+        border: '1px solid color-mix(in srgb, var(--color-primary) 35%, var(--color-border))',
+        backdropFilter: 'blur(20px)',
+        boxShadow: '0 0 0 1px color-mix(in srgb, var(--color-primary) 10%, transparent), 0 32px 80px -16px rgba(0,0,0,0.4), 0 0 80px -20px color-mix(in srgb, var(--color-primary) 20%, transparent)',
+        transform: 'perspective(1200px) rotateY(-6deg) rotateX(2deg)',
+      }}
     >
-      {/* Header */}
+      {/* Terminal title bar */}
       <div
-        className="px-4 py-3 border-b flex items-center gap-3"
-        style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg-muted)' }}
+        className="px-4 py-3 flex items-center gap-3"
+        style={{ borderBottom: '1px solid var(--color-border)', background: 'var(--color-bg-muted)' }}
       >
         <div className="flex gap-1.5">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'var(--color-accent)' }} />
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'var(--color-warning)' }} />
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'var(--color-success)' }} />
+          {['#ff5f57', '#febc2e', '#28c840'].map((c) => (
+            <div key={c} className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c }} />
+          ))}
         </div>
-        <div className="flex items-center gap-2">
-          <Brain size={14} style={{ color: 'var(--color-primary)' }} />
-          <span className="text-xs font-medium font-mono" style={{ color: 'var(--color-text-muted)' }}>
-            Chatbot Hướng Dẫn AI
-          </span>
+        <div className="flex-1 mx-4 h-5 flex items-center justify-center rounded text-[10px] font-mono"
+          style={{ background: 'var(--color-bg)', color: 'var(--color-text-light)', border: '1px solid var(--color-border)' }}>
+          chatbot.hướng-dẫn-ai
         </div>
+        <Brain size={12} style={{ color: 'var(--color-primary)' }} />
       </div>
 
       {/* Messages */}
-      <div className="p-4 space-y-3 max-h-72 overflow-y-auto scrollbar-hide">
+      <div className="p-4 space-y-3 max-h-72 overflow-hidden">
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            {msg.role === 'ai' && (
+              <div
+                className="w-5 h-5 rounded flex items-center justify-center flex-shrink-0 mr-2 mt-0.5"
+                style={{ background: 'color-mix(in srgb, var(--color-primary) 15%, transparent)' }}
+              >
+                <Brain size={10} style={{ color: 'var(--color-primary)' }} />
+              </div>
+            )}
             <div
-              className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed whitespace-pre-line`}
+              className="max-w-[82%] px-3 py-2.5 text-xs leading-relaxed whitespace-pre-line"
               style={
                 msg.role === 'user'
-                  ? { backgroundColor: 'var(--color-primary)', color: 'var(--color-bg)' }
-                  : { backgroundColor: 'var(--color-bg-muted)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }
+                  ? {
+                      background: 'var(--color-primary)',
+                      color: '#fff',
+                      borderRadius: '8px 8px 2px 8px',
+                    }
+                  : {
+                      background: 'var(--color-bg-muted)',
+                      color: 'var(--color-text)',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: '2px 8px 8px 8px',
+                    }
               }
             >
               {msg.text}
             </div>
           </div>
         ))}
-        {/* Typing indicator */}
-        <div className="flex justify-start">
+        {/* Typing */}
+        <div className="flex justify-start items-center gap-2">
+          <div className="w-5 h-5 rounded flex items-center justify-center" style={{ background: 'color-mix(in srgb, var(--color-primary) 15%, transparent)' }}>
+            <Brain size={10} style={{ color: 'var(--color-primary)' }} />
+          </div>
           <div
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl"
-            style={{ backgroundColor: 'var(--color-bg-muted)', border: '1px solid var(--color-border)' }}
+            className="flex items-center gap-1 px-3 py-2 rounded-lg"
+            style={{ background: 'var(--color-bg-muted)', border: '1px solid var(--color-border)' }}
           >
             {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className="typing-dot w-1.5 h-1.5 rounded-full"
-                style={{ backgroundColor: 'var(--color-primary)', animationDelay: `${i * 0.2}s` }}
-              />
+              <div key={i} className="typing-dot w-1.5 h-1.5 rounded-full" style={{ backgroundColor: 'var(--color-primary)', animationDelay: `${i * 0.2}s` }} />
             ))}
           </div>
         </div>
       </div>
 
-      {/* Input */}
+      {/* Input bar */}
       <div
-        className="px-4 py-3 border-t flex items-center gap-2"
-        style={{ borderColor: 'var(--color-border)' }}
+        className="px-4 py-3 flex items-center gap-2"
+        style={{ borderTop: '1px solid var(--color-border)', background: 'var(--color-bg-muted)' }}
       >
         <div
-          className="flex-1 h-8 rounded-lg px-3 flex items-center text-xs"
-          style={{ backgroundColor: 'var(--color-bg-muted)', color: 'var(--color-text-light)', border: '1px solid var(--color-border)' }}
+          className="flex-1 h-9 px-3 flex items-center text-xs font-mono gap-2"
+          style={{
+            background: 'var(--color-bg)',
+            border: '1px solid color-mix(in srgb, var(--color-primary) 40%, var(--color-border))',
+            color: 'var(--color-text-light)',
+            boxShadow: '0 0 12px -4px color-mix(in srgb, var(--color-primary) 20%, transparent)',
+          }}
         >
+          <span style={{ color: 'var(--color-primary)' }}>›</span>
           Hỏi về cách dùng AI...
         </div>
         <div
-          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-          style={{ backgroundColor: 'var(--color-primary)' }}
+          className="w-9 h-9 flex items-center justify-center flex-shrink-0"
+          style={{ background: 'var(--color-primary)' }}
         >
-          <ArrowRight size={14} style={{ color: 'var(--color-bg)' }} />
+          <ArrowRight size={14} color="#fff" />
         </div>
       </div>
     </div>
   );
 }
 
-function MockPromptCard() {
+function DashboardPreview() {
   return (
     <div
-      className="rounded-xl border p-5 space-y-4"
-      style={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)' }}
+      className="w-full overflow-hidden"
+      style={{ border: '1px solid var(--color-border)', background: 'var(--color-bg-card)' }}
     >
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-text-light)' }}>
-          Prompt mẫu — Tiếng Anh
-        </span>
-        <span className="tag tag-primary">Học tập</span>
-      </div>
+      {/* Dashboard header bar */}
       <div
-        className="rounded-lg p-4 text-sm font-mono leading-relaxed"
-        style={{ backgroundColor: 'var(--color-bg-muted)', color: 'var(--color-text)', border: '1px dashed var(--color-border-strong)' }}
+        className="px-6 py-4 flex items-center justify-between gap-4"
+        style={{ borderBottom: '1px solid var(--color-border)', background: 'var(--color-bg-muted)' }}
       >
-        &ldquo;Bạn là giáo viên tiếng Anh. Tôi đang học Unit 3 — Environment. Hãy giải thích 5 từ vựng quan trọng theo cấu trúc: Từ → Nghĩa → Ví dụ câu. Dùng tiếng Việt để giải thích.&rdquo;
-      </div>
-      <div className="flex items-center justify-between">
-        <div className="flex gap-2">
-          <span className="tag">Tiếng Anh</span>
-          <span className="tag">Từ vựng</span>
+        <div className="flex items-center gap-2">
+          <BarChart2 size={14} style={{ color: 'var(--color-primary)' }} />
+          <span className="font-mono text-xs font-semibold" style={{ color: 'var(--color-text)' }}>Dashboard học tập</span>
         </div>
-        <button
-          type="button"
-          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
-          style={{ color: 'var(--color-primary)', backgroundColor: 'var(--color-primary-light)' }}
-          onClick={() => navigator.clipboard.writeText('Bạn là giáo viên tiếng Anh...')}
+        <div className="flex items-center gap-4">
+          {[
+            { label: 'Tuần này', active: true },
+            { label: 'Tháng này', active: false },
+          ].map((tab) => (
+            <button
+              key={tab.label}
+              type="button"
+              className="text-xs font-medium px-3 py-1"
+              style={{
+                color: tab.active ? 'var(--color-primary)' : 'var(--color-text-muted)',
+                background: tab.active ? 'color-mix(in srgb, var(--color-primary) 12%, transparent)' : 'transparent',
+                border: tab.active ? '1px solid color-mix(in srgb, var(--color-primary) 30%, transparent)' : '1px solid transparent',
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="p-6">
+        {/* Stats row */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          {[
+            { label: 'Prompt đã tạo', value: '47', icon: Sparkles, color: '#a78bfa' },
+            { label: 'Phiên chat', value: '23', icon: MessageSquare, color: '#3b82f6' },
+            { label: 'Bài học đọc', value: '12', icon: BookOpen, color: '#34d399' },
+            { label: 'Ngày liên tiếp', value: '7', icon: TrendingUp, color: '#fb923c' },
+          ].map((s) => (
+            <div
+              key={s.label}
+              className="p-4"
+              style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <s.icon size={13} color={s.color} />
+                <span className="text-[10px]" style={{ color: 'var(--color-text-light)' }}>{s.label}</span>
+              </div>
+              <p
+                className="font-display font-bold text-2xl"
+                style={{ color: s.color, letterSpacing: '-0.04em' }}
+              >
+                {s.value}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Charts row */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          {/* Chart 1 */}
+          <div style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', padding: '16px' }}>
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>Năng suất học tập</p>
+              <span className="text-[10px] font-mono px-2 py-0.5" style={{ color: '#34d399', background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.2)' }}>+18%</span>
+            </div>
+            <ResponsiveContainer width="100%" height={100}>
+              <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="grad1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="name" tick={{ fontSize: 9, fill: 'var(--color-text-light)' }} axisLine={false} tickLine={false} />
+                <YAxis hide />
+                <Tooltip
+                  contentStyle={{
+                    background: 'var(--color-bg-card)',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 0,
+                    fontSize: 11,
+                    color: 'var(--color-text)',
+                  }}
+                  cursor={{ stroke: '#3b82f6', strokeWidth: 1, strokeDasharray: '4 2' }}
+                />
+                <Area type="monotone" dataKey="hoc" stroke="#3b82f6" strokeWidth={2} fill="url(#grad1)" dot={false} activeDot={{ r: 4, fill: '#3b82f6' }} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Chart 2 */}
+          <div style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', padding: '16px' }}>
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>Số Prompt đã tạo</p>
+              <span className="text-[10px] font-mono px-2 py-0.5" style={{ color: '#a78bfa', background: 'rgba(167,139,250,0.1)', border: '1px solid rgba(167,139,250,0.2)' }}>+32%</span>
+            </div>
+            <ResponsiveContainer width="100%" height={100}>
+              <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="grad2" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#a78bfa" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="#a78bfa" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="name" tick={{ fontSize: 9, fill: 'var(--color-text-light)' }} axisLine={false} tickLine={false} />
+                <YAxis hide />
+                <Tooltip
+                  contentStyle={{
+                    background: 'var(--color-bg-card)',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 0,
+                    fontSize: 11,
+                    color: 'var(--color-text)',
+                  }}
+                  cursor={{ stroke: '#a78bfa', strokeWidth: 1, strokeDasharray: '4 2' }}
+                />
+                <Area type="monotone" dataKey="prompts" stroke="#a78bfa" strokeWidth={2} fill="url(#grad2)" dot={false} activeDot={{ r: 4, fill: '#a78bfa' }} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Prompt sample */}
+        <div
+          className="mt-4 p-4 flex items-start gap-4"
+          style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}
         >
-          <Copy size={12} /> Sao chép
-        </button>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-light)' }}>Prompt gần nhất</span>
+              <span
+                className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5"
+                style={{ color: '#a78bfa', background: 'rgba(167,139,250,0.1)' }}
+              >
+                Tiếng Anh
+              </span>
+            </div>
+            <p
+              className="text-xs leading-relaxed font-mono truncate"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
+              &ldquo;Bạn là giáo viên tiếng Anh. Giải thích 5 từ vựng Unit 3 — Environment...&rdquo;
+            </p>
+          </div>
+          <button
+            type="button"
+            className="flex-shrink-0 flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 transition-colors"
+            style={{ color: 'var(--color-primary)', background: 'color-mix(in srgb, var(--color-primary) 10%, transparent)' }}
+          >
+            <Copy size={11} /> Sao chép
+          </button>
+        </div>
       </div>
     </div>
   );
