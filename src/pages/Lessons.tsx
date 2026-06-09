@@ -1,20 +1,8 @@
 import { useState } from 'react';
-import {
-  ChevronRight,
-  X,
-  Clock,
-  BookOpen,
-  Brain,
-  Sparkles,
-  MessageSquare,
-  Target,
-  Lightbulb,
-  TrendingUp,
-  AlertTriangle,
-  Star,
-} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Clock, Brain, MessageSquare, AlertTriangle, Target, BookOpen, TrendingUp, Star, Search, ChevronDown } from 'lucide-react';
 
-interface Lesson {
+export interface Lesson {
   id: number;
   title: string;
   tag: string;
@@ -29,7 +17,7 @@ interface Lesson {
   };
 }
 
-const lessons: Lesson[] = [
+export const lessons: Lesson[] = [
   {
     id: 1,
     title: 'Cách biến AI thành gia sư cá nhân miễn phí',
@@ -190,9 +178,9 @@ const lessons: Lesson[] = [
   },
 ];
 
-const allTags = ['Tất cả', 'Chiến lược', 'Tiếng Anh', 'Kinh nghiệm', 'Ôn thi', 'Mẹo học', 'Tư duy phản biện'];
+export const allTags = ['Tất cả', 'Chiến lược', 'Tiếng Anh', 'Kinh nghiệm', 'Ôn thi', 'Mẹo học', 'Tư duy phản biện'];
 
-const tagColorMap: Record<string, { bg: string; text: string }> = {
+export const tagColorMap: Record<string, { bg: string; text: string }> = {
   primary: { bg: 'var(--color-primary-light)', text: 'var(--color-primary)' },
   accent: { bg: 'var(--color-accent-light)', text: 'var(--color-accent)' },
   warning: { bg: 'color-mix(in srgb, var(--color-warning) 12%, transparent)', text: 'var(--color-warning)' },
@@ -200,93 +188,125 @@ const tagColorMap: Record<string, { bg: string; text: string }> = {
 };
 
 export default function Lessons() {
+  const navigate = useNavigate();
   const [activeTag, setActiveTag] = useState('Tất cả');
-  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [search, setSearch] = useState('');
+  const [tagsExpanded, setTagsExpanded] = useState(false);
 
-  const filtered = activeTag === 'Tất cả'
-    ? lessons
-    : lessons.filter((l) => l.tag === activeTag);
+  const TAG_VISIBLE_COUNT = 4;
+  const visibleTags = tagsExpanded ? allTags : allTags.slice(0, TAG_VISIBLE_COUNT + 1);
 
-  const featured = lessons.filter((l) => l.featured);
-  const regular = filtered.filter((l) => !l.featured || activeTag !== 'Tất cả');
+  const filtered = lessons.filter((l) => {
+    const matchTag = activeTag === 'Tất cả' || l.tag === activeTag;
+    const matchSearch = search.trim() === '' || l.title.toLowerCase().includes(search.toLowerCase()) || l.desc.toLowerCase().includes(search.toLowerCase());
+    return matchTag && matchSearch;
+  });
+
+  const featured = filtered.filter((l) => l.featured);
+  const regular = filtered.filter((l) => !l.featured);
 
   return (
     <div style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}>
-      {/* Page header */}
+      {/* Header */}
       <div
-        className="border-b py-12"
+        className="border-b py-10"
         style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg-card)' }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <span className="section-label mb-4 inline-flex">Bài Học</span>
-          <h1 className="text-3xl sm:text-4xl font-bold mt-4 mb-4 text-balance">
+          <span className="section-label mb-3 inline-flex rounded-full">Bài Học</span>
+          <h1 className="text-3xl sm:text-4xl font-bold mt-3 mb-3 text-balance" style={{ fontFamily: 'Syne, sans-serif', letterSpacing: '-0.03em' }}>
             Kho kinh nghiệm
             <br />
             <span style={{ color: 'var(--color-primary)' }}>học cùng AI</span>
           </h1>
-          <p className="text-base leading-relaxed max-w-2xl" style={{ color: 'var(--color-text-muted)' }}>
-            Không phải lý thuyết khô khan. Đây là những bài học thực tế, chiến lược cụ thể
-            và kinh nghiệm xương máu từ việc dùng AI học tập mỗi ngày.
+          <p className="text-sm leading-relaxed max-w-xl" style={{ color: 'var(--color-text-muted)' }}>
+            Không phải lý thuyết khô khan. Những bài học thực tế, chiến lược cụ thể từ việc dùng AI học tập mỗi ngày.
           </p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        {/* Featured — only show when "Tất cả" */}
-        {activeTag === 'Tất cả' && (
-          <div className="mb-10">
-            <div className="flex items-center gap-2 mb-5">
-              <Star size={16} style={{ color: 'var(--color-accent)' }} />
-              <h2 className="font-semibold" style={{ color: 'var(--color-text)' }}>Bài học nổi bật</h2>
+        {/* Search + filter row */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+          {/* Search */}
+          <div className="relative flex-1 max-w-md">
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--color-text-light)' }} />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Tìm bài học..."
+              className="w-full pl-9 pr-4 py-2.5 text-sm rounded-full outline-none transition-all"
+              style={{
+                backgroundColor: 'var(--color-bg-muted)',
+                border: '1.5px solid var(--color-border)',
+                color: 'var(--color-text)',
+              }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--color-primary)')}
+              onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--color-border)')}
+            />
+          </div>
+
+          {/* Tags */}
+          <div className="flex flex-wrap items-center gap-2">
+            {visibleTags.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => setActiveTag(tag)}
+                className="px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all"
+                style={
+                  activeTag === tag
+                    ? { backgroundColor: 'var(--color-primary)', color: '#fff' }
+                    : { backgroundColor: 'var(--color-bg-muted)', color: 'var(--color-text-muted)', border: '1px solid var(--color-border)' }
+                }
+              >
+                {tag}
+              </button>
+            ))}
+            {allTags.length > TAG_VISIBLE_COUNT + 1 && (
+              <button
+                type="button"
+                onClick={() => setTagsExpanded((v) => !v)}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-colors"
+                style={{ backgroundColor: 'var(--color-bg-muted)', color: 'var(--color-text-light)', border: '1px solid var(--color-border)' }}
+              >
+                {tagsExpanded ? 'Thu gọn' : `+${allTags.length - TAG_VISIBLE_COUNT - 1} tag`}
+                <ChevronDown size={12} style={{ transform: tagsExpanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Featured */}
+        {activeTag === 'Tất cả' && search === '' && featured.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Star size={14} style={{ color: 'var(--color-accent)' }} />
+              <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>Nổi bật</span>
             </div>
-            <div className="grid sm:grid-cols-2 gap-5">
+            <div className="grid sm:grid-cols-2 gap-4">
               {featured.map((lesson) => (
-                <FeaturedCard
-                  key={lesson.id}
-                  lesson={lesson}
-                  onClick={() => setSelectedLesson(lesson)}
-                />
+                <FeaturedCard key={lesson.id} lesson={lesson} onClick={() => navigate(`/lessons/${lesson.id}`)} />
               ))}
             </div>
           </div>
         )}
 
-        {/* Tag filter */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          {allTags.map((tag) => (
-            <button
-              key={tag}
-              type="button"
-              onClick={() => setActiveTag(tag)}
-              className="px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors"
-              style={
-                activeTag === tag
-                  ? { backgroundColor: 'var(--color-primary)', color: 'var(--color-bg)' }
-                  : { backgroundColor: 'var(--color-bg-muted)', color: 'var(--color-text-muted)', border: '1px solid var(--color-border)' }
-              }
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
-
-        {/* Cards grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {(activeTag === 'Tất cả' ? filtered : regular).map((lesson) => (
-            <LessonCard
-              key={lesson.id}
-              lesson={lesson}
-              onClick={() => setSelectedLesson(lesson)}
-            />
-          ))}
-        </div>
+        {/* Regular grid */}
+        {filtered.length === 0 ? (
+          <div className="text-center py-16" style={{ color: 'var(--color-text-muted)' }}>
+            <p className="text-sm">Không tìm thấy bài học phù hợp.</p>
+          </div>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {(activeTag === 'Tất cả' && search === '' ? regular : filtered).map((lesson) => (
+              <LessonCard key={lesson.id} lesson={lesson} onClick={() => navigate(`/lessons/${lesson.id}`)} />
+            ))}
+          </div>
+        )}
       </div>
-
-      {/* Detail modal */}
-      {selectedLesson && (
-        <LessonModal lesson={selectedLesson} onClose={() => setSelectedLesson(null)} />
-      )}
     </div>
   );
 }
@@ -298,33 +318,39 @@ function FeaturedCard({ lesson, onClick }: { lesson: Lesson; onClick: () => void
     <button
       type="button"
       onClick={onClick}
-      className="text-left card-hover p-6 flex flex-col gap-4 w-full group"
+      className="text-left card-soft-hover p-6 flex flex-col gap-4 w-full"
     >
       <div className="flex items-start justify-between gap-3">
-        <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ backgroundColor: bg }}
-        >
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: bg }}>
           <Icon size={20} style={{ color: text }} />
         </div>
         <div className="flex items-center gap-2">
-          <span className="tag" style={{ backgroundColor: bg, color: text, border: 'none' }}>{lesson.tag}</span>
-          <span className="tag tag-accent">Nổi bật</span>
+          <span
+            className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full"
+            style={{ backgroundColor: bg, color: text }}
+          >
+            {lesson.tag}
+          </span>
+          <span
+            className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full"
+            style={{ backgroundColor: 'var(--color-accent-light)', color: 'var(--color-accent)' }}
+          >
+            Nổi bật
+          </span>
         </div>
       </div>
       <div>
-        <h3 className="font-bold text-base mb-2 leading-snug text-balance" style={{ color: 'var(--color-text)' }}>
+        <h3 className="font-bold text-base mb-2 leading-snug text-balance" style={{ color: 'var(--color-text)', fontFamily: 'Syne, sans-serif' }}>
           {lesson.title}
         </h3>
-        <p className="text-sm leading-relaxed line-clamp-2" style={{ color: 'var(--color-text-muted)' }}>
-          {lesson.desc}
-        </p>
+        <p className="text-sm leading-relaxed line-clamp-2" style={{ color: 'var(--color-text-muted)' }}>{lesson.desc}</p>
       </div>
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-mono" style={{ color: 'var(--color-text-light)' }}>{lesson.readTime}</span>
-        <div className="flex items-center gap-1 text-sm font-semibold" style={{ color: 'var(--color-primary)' }}>
-          Đọc tiếp <ChevronRight size={14} />
-        </div>
+      <div className="flex items-center justify-between mt-auto">
+        <span className="flex items-center gap-1.5 text-xs" style={{ color: 'var(--color-text-light)' }}>
+          <Clock size={11} />
+          {lesson.readTime}
+        </span>
+        <span className="text-xs font-semibold" style={{ color: 'var(--color-primary)' }}>Đọc tiếp →</span>
       </div>
     </button>
   );
@@ -337,112 +363,26 @@ function LessonCard({ lesson, onClick }: { lesson: Lesson; onClick: () => void }
     <button
       type="button"
       onClick={onClick}
-      className="text-left card-hover p-5 flex flex-col gap-3 w-full group"
+      className="text-left card-soft-hover p-5 flex flex-col gap-3 w-full"
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="tag" style={{ backgroundColor: bg, color: text, border: 'none' }}>{lesson.tag}</span>
-        <span className="text-xs font-mono" style={{ color: 'var(--color-text-light)' }}>{lesson.readTime}</span>
+        <span
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full"
+          style={{ backgroundColor: bg, color: text }}
+        >
+          <Icon size={11} />
+          {lesson.tag}
+        </span>
+        <span className="flex items-center gap-1 text-xs" style={{ color: 'var(--color-text-light)' }}>
+          <Clock size={10} />
+          {lesson.readTime}
+        </span>
       </div>
-      <h3 className="font-semibold leading-snug" style={{ color: 'var(--color-text)' }}>
+      <h3 className="font-semibold leading-snug" style={{ color: 'var(--color-text)', fontFamily: 'Syne, sans-serif', letterSpacing: '-0.01em' }}>
         {lesson.title}
       </h3>
-      <p className="text-sm leading-relaxed flex-1 line-clamp-3" style={{ color: 'var(--color-text-muted)' }}>
-        {lesson.desc}
-      </p>
-      <div className="flex items-center gap-1 text-sm font-medium" style={{ color: 'var(--color-primary)' }}>
-        Đọc tiếp <ChevronRight size={13} />
-      </div>
+      <p className="text-sm leading-relaxed flex-1 line-clamp-3" style={{ color: 'var(--color-text-muted)' }}>{lesson.desc}</p>
+      <span className="text-xs font-semibold mt-auto" style={{ color: 'var(--color-primary)' }}>Đọc tiếp →</span>
     </button>
-  );
-}
-
-function LessonModal({ lesson, onClose }: { lesson: Lesson; onClose: () => void }) {
-  const { bg, text } = tagColorMap[lesson.tagColor];
-  const Icon = lesson.icon;
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 sm:p-6"
-      style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
-      <div
-        className="w-full max-w-2xl rounded-2xl border overflow-hidden flex flex-col max-h-[90vh]"
-        style={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)' }}
-      >
-        {/* Header */}
-        <div
-          className="flex items-start gap-4 p-6 border-b"
-          style={{ borderColor: 'var(--color-border)' }}
-        >
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: bg }}>
-            <Icon size={20} style={{ color: text }} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="tag" style={{ backgroundColor: bg, color: text, border: 'none' }}>{lesson.tag}</span>
-              <span className="text-xs font-mono flex items-center gap-1" style={{ color: 'var(--color-text-light)' }}>
-                <Clock size={10} />
-                {lesson.readTime}
-              </span>
-            </div>
-            <h2 className="text-xl font-bold leading-snug text-balance" style={{ color: 'var(--color-text)' }}>
-              {lesson.title}
-            </h2>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-shrink-0 p-2 rounded-xl hover:bg-bg-muted transition-colors"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
-            <X size={18} />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="overflow-y-auto flex-1 p-6 space-y-6">
-          <p className="text-base leading-relaxed italic" style={{ color: 'var(--color-text-muted)', borderLeft: '3px solid var(--color-primary)', paddingLeft: '1rem' }}>
-            {lesson.content.intro}
-          </p>
-
-          {lesson.content.sections.map((section, i) => (
-            <div key={i} className="space-y-3">
-              <h3 className="font-bold" style={{ color: 'var(--color-text)' }}>{section.heading}</h3>
-              <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
-                {section.body}
-              </p>
-              {section.tips && (
-                <div className="flex flex-wrap gap-2">
-                  {section.tips.map((tip) => (
-                    <span
-                      key={tip}
-                      className="text-xs px-3 py-1.5 rounded-full font-medium"
-                      style={{ backgroundColor: 'var(--color-primary-light)', color: 'var(--color-primary)' }}
-                    >
-                      {tip}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Footer */}
-        <div
-          className="px-6 py-4 border-t flex justify-end"
-          style={{ borderColor: 'var(--color-border)' }}
-        >
-          <button
-            type="button"
-            onClick={onClose}
-            className="btn-outline text-sm"
-          >
-            Đóng
-          </button>
-        </div>
-      </div>
-    </div>
   );
 }

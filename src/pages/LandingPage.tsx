@@ -98,18 +98,6 @@ export default function LandingPage() {
 
             {/* Left copy */}
             <div className="space-y-8 animate-fade-in-up">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2.5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-widest"
-                style={{
-                  border: '1px solid color-mix(in srgb, var(--color-primary) 40%, transparent)',
-                  color: 'var(--color-primary)',
-                  background: 'color-mix(in srgb, var(--color-primary) 8%, transparent)',
-                  backdropFilter: 'blur(8px)',
-                }}>
-                <span className="w-1.5 h-1.5 rounded-full animate-pulse-dot" style={{ backgroundColor: 'var(--color-primary)' }} />
-                Dự án sáng tạo học sinh
-              </div>
-
               {/* Headline */}
               <div className="space-y-2">
                 <h1
