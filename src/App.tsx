@@ -2,11 +2,12 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import Layout from './components/Layout';
 import LandingPage from './pages/LandingPage';
-import Dashboard from './pages/Dashboard';
-import PromptCreator from './pages/PromptCreator';
-import Textbooks from './pages/Textbooks';
-import PromptLibrary from './pages/PromptLibrary';
 import Guides from './pages/Guides';
+import AiTools from './pages/AiTools';
+import Lessons from './pages/Lessons';
+import PromptCreator from './pages/PromptCreator';
+import PromptLibrary from './pages/PromptLibrary';
+import Textbooks from './pages/Textbooks';
 
 function App() {
   return (
@@ -15,11 +16,14 @@ function App() {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/prompt-creator" element={<PromptCreator />} />
-            <Route path="/textbooks" element={<Textbooks />} />
-            <Route path="/prompts" element={<PromptLibrary />} />
             <Route path="/guides" element={<Guides />} />
+            <Route path="/ai-tools" element={<AiTools />} />
+            <Route path="/lessons" element={<Lessons />} />
+            <Route path="/prompt-creator" element={<PromptCreator />} />
+            <Route path="/prompts" element={<PromptLibrary />} />
+            <Route path="/textbooks" element={<Textbooks />} />
+            {/* Legacy redirect */}
+            <Route path="/dashboard" element={<Navigate to="/" replace />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
